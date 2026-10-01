@@ -66,7 +66,7 @@ jobs:
                   assert 'class="hero-video"' in html, 'Video hero missing'
                   assert 'id="schedule-drawer"' in html, 'Schedule drawer missing'
                   assert 'id="count-days"' in html, 'Countdown missing'
-                  assert 'href="style.css"' in html, 'Stylesheet link missing'
+                  assert 'href="style.css' in html, 'Stylesheet link missing'
                   assert '.hero-video' in read('style.css'), 'Landing page stylesheet missing'
                   assert '<video id="hero-player"' in html, 'Native video background missing'
                   assert 'assets/ive-theater-background.mp4' in html, 'MP4 source missing'
