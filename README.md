@@ -2,7 +2,7 @@
 
 A responsive cinematic comeback landing page using the supplied IVE imagery, with an interactive gallery and a release calendar.
 
-The hero embeds https://www.youtube.com/watch?v=iBeo74ujfes as a muted, looping background without an image carousel or playback button. A single still is retained as a loading/error fallback and respects reduced-motion preferences.
+The hero plays the user-supplied 1080p MP4 as a muted, inline loop. The background copy has its audio track removed and is optimized for progressive playback. A photo remains as a loading/error fallback, and playback pauses when the hero is off-screen or reduced motion is enabled.
 
 ## Publish on GitHub Pages
 
@@ -16,6 +16,6 @@ The site URL appears in the successful workflow deployment and in repository Set
 
 From this repository, run `python -m http.server 8000` and open http://localhost:8000.
 
-YouTube playback requires internet access, embed permission from the video owner, and a served webpage. The photo fallback remains if playback fails.
+The background video is served directly from assets/ive-theater-background.mp4. It does not use a YouTube player.
 
-Fan-made experience. Supplied imagery belongs to STARSHIP Entertainment. No video was downloaded.
+Fan-made experience. Supplied imagery belongs to STARSHIP Entertainment. The video was supplied by the user.

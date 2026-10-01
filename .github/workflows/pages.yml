@@ -68,8 +68,13 @@ jobs:
                   assert 'id="count-days"' in html, 'Countdown missing'
                   assert 'href="style.css"' in html, 'Stylesheet link missing'
                   assert '.hero-video' in read('style.css'), 'Landing page stylesheet missing'
-                  assert 'iBeo74ujfes' in read('script.js'), 'YouTube background script missing'
-                  print('Verified live landing page, stylesheet, and YouTube background script at ' + base)
+                  assert '<video id="hero-player"' in html, 'Native video background missing'
+                  assert 'assets/ive-theater-background.mp4' in html, 'MP4 source missing'
+                  assert 'youtube.com/iframe_api' not in read('script.js'), 'External video player still present'
+                  request = urllib.request.Request(base + 'assets/ive-theater-background.mp4' + query, headers={'Range': 'bytes=0-31'})
+                  with urllib.request.urlopen(request, timeout=30) as response:
+                      assert b'ftyp' in response.read(32), 'Published MP4 is invalid'
+                  print('Verified live landing page, stylesheet, and native MP4 background at ' + base)
                   break
               except Exception as error:
                   if attempt == 17:
