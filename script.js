@@ -76,3 +76,29 @@ albumLinkArt.addEventListener('error',restoreAlbumArt,{once:true});
 if(albumLinkArt.complete&&albumLinkArt.naturalWidth===0)restoreAlbumArt();
 
 const heroVisibility=new IntersectionObserver(entries=>{heroOnScreen=entries[0].isIntersecting;document.body.classList.toggle('past-hero',!heroOnScreen);syncBackgroundPlayback()},{threshold:0});heroVisibility.observe(document.querySelector('.hero'));
+
+// Small five-point star bursts for clicks and taps; never intercept input.
+const activeStarbursts=new Set();
+const starSvgNamespace='http://www.w3.org/2000/svg';
+function clearStarbursts(){for(const burst of activeStarbursts){burst.getAnimations({subtree:true}).forEach(animation=>animation.cancel());burst.remove()}activeStarbursts.clear()}
+function showClickStarburst(event){
+ if(motionPreference.matches||event.button>0)return;
+ let x=event.clientX,y=event.clientY;
+ if(event.detail===0&&event.target instanceof Element){const rect=event.target.getBoundingClientRect();x=rect.left+rect.width/2;y=rect.top+rect.height/2}
+ if(activeStarbursts.size>=6){const oldest=activeStarbursts.values().next().value;oldest.remove();activeStarbursts.delete(oldest)}
+ const burst=document.createElement('div');burst.className='click-starburst';burst.setAttribute('aria-hidden','true');
+ (document.querySelector('dialog[open]')||document.body).appendChild(burst);activeStarbursts.add(burst);
+ setTimeout(()=>{burst.getAnimations({subtree:true}).forEach(animation=>animation.cancel());burst.remove();activeStarbursts.delete(burst)},900);
+ let remaining=6;
+ const finish=()=>{remaining--;if(remaining<=0){burst.remove();activeStarbursts.delete(burst)}};
+ for(let index=0;index<6;index++){
+  const star=document.createElementNS(starSvgNamespace,'svg');star.setAttribute('viewBox','0 0 100 100');star.setAttribute('focusable','false');star.classList.add('click-star');
+  const polygon=document.createElementNS(starSvgNamespace,'polygon');polygon.setAttribute('points','50,4 61,36 95,36 68,57 78,90 50,70 22,90 32,57 5,36 39,36');star.appendChild(polygon);
+  star.style.left=x+'px';star.style.top=y+'px';star.style.width=star.style.height=(12+Math.random()*9)+'px';star.style.color=index%2?'var(--yellow)':'var(--pink)';burst.appendChild(star);
+  const angle=index*Math.PI/3+(Math.random()-.5)*.4;const distance=32+Math.random()*35;const dx=Math.cos(angle)*distance,dy=Math.sin(angle)*distance;const rotation=(Math.random()-.5)*160;
+  const animation=star.animate([{transform:'translate(-50%,-50%) scale(.3) rotate(0deg)',opacity:0},{transform:`translate(calc(-50% + ${dx*.25}px),calc(-50% + ${dy*.25}px)) scale(1) rotate(${rotation*.3}deg)`,opacity:1,offset:.18},{transform:`translate(calc(-50% + ${dx}px),calc(-50% + ${dy+12}px)) scale(.45) rotate(${rotation}deg)`,opacity:0}],{duration:650+Math.random()*180,easing:'cubic-bezier(.15,.6,.35,1)',fill:'forwards'});
+  animation.finished.then(finish,finish);
+ }
+}
+document.addEventListener('click',showClickStarburst);
+motionPreference.addEventListener('change',event=>{if(event.matches)clearStarbursts()});
