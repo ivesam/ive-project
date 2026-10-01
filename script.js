@@ -142,23 +142,47 @@ function applyScheduleZone(zone,message){
  renderZoneDetails();currentNextTimestamp=undefined;updateCountdown();timezoneStatus.textContent=message+' '+validated.replaceAll('_',' ');
 }
 
+const locationProviders=[
+ {name:'ipapi.co',url:'https://ipapi.co/json/',read:data=>({timezone:data.timezone,country:data.country_name,error:data.error})},
+ {name:'FreeIPAPI',url:'https://free.freeipapi.com/api/json',read:data=>({timezone:Array.isArray(data.timeZones)?(data.timeZones.length===1?data.timeZones[0]:null):data.timezone?.id||data.timezone,country:data.countryName,error:data.error})}
+];
+function locationFailureMessage(error){
+ if(error.name==='AbortError')return 'Request timed out';
+ if(error instanceof TypeError)return 'Could not connect (network, browser blocking, or CORS)';
+ return error.message;
+}
 let timezoneRequestNumber=0;
 async function detectVisitorTimeZone(){
  const requestNumber=++timezoneRequestNumber;
  locationTimeState='pending';renderZoneDetails();timezoneRetry.disabled=true;
- timezoneStatus.textContent='Detecting your IP location… Showing KST until detected.';
+ const diagnostics=document.getElementById('location-lookup-details');diagnostics.replaceChildren();
  applyScheduleZone('Asia/Seoul','Detecting your IP location; temporarily showing KST:');
- const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),4500);
- try{
-  const response=await fetch('https://ipapi.co/json/',{signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer'});
-  if(!response.ok)throw new Error('Location lookup unavailable');const result=await response.json();
-  if(result.error||typeof result.timezone!=='string')throw new Error('Location time zone unavailable');
+ let detected=false;
+ for(const provider of locationProviders){
   if(requestNumber!==timezoneRequestNumber)return;
-  locationTimeState='detected';
-  const country=typeof result.country_name==='string'?result.country_name+' · ':'';
-  applyScheduleZone(result.timezone,'IP location: '+country);
- }catch{if(requestNumber===timezoneRequestNumber){locationTimeState='unavailable';applyScheduleZone('Asia/Seoul','IP location unavailable; showing Korea time (KST):')}}
- finally{clearTimeout(timeout);if(requestNumber===timezoneRequestNumber)timezoneRetry.disabled=false}
+  const detail=document.createElement('li');detail.textContent=provider.name+': checking…';diagnostics.appendChild(detail);
+  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),6500);
+  try{
+   const response=await fetch(provider.url,{signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer',cache:'no-store'});
+   if(!response.ok)throw new Error(response.status===429?'Service rate limit reached (429)':'Service returned HTTP '+response.status);
+   let data;try{data=await response.json()}catch{throw new Error('Service returned an invalid response')}
+   const result=provider.read(data);
+   if(result.error)throw new Error('Service rejected the lookup');
+   if(typeof result.timezone!=='string'||!result.timezone)throw new Error('Service did not return a time zone');
+   let zone;try{zone=new Intl.DateTimeFormat('en-US',{timeZone:result.timezone}).resolvedOptions().timeZone}catch{throw new Error('Service returned an unsupported time zone')}
+   if(requestNumber!==timezoneRequestNumber)return;
+   locationTimeState='detected';
+   const country=typeof result.country==='string'?result.country+' · ':'';
+   applyScheduleZone(zone,'IP location: '+country);
+   detail.textContent=provider.name+': detected '+country+zone;
+   detected=true;break;
+  }catch(error){if(requestNumber!==timezoneRequestNumber)return;detail.textContent=provider.name+': '+locationFailureMessage(error)}
+  finally{clearTimeout(timeout)}
+ }
+ if(requestNumber===timezoneRequestNumber){
+  if(!detected){locationTimeState='unavailable';applyScheduleZone('Asia/Seoul','IP lookup could not complete; showing Korea time (KST):')}
+  timezoneRetry.disabled=false;
+ }
 }
 try{localStorage.removeItem('ive-schedule-timezone')}catch{}
 timezoneRetry.addEventListener('click',detectVisitorTimeZone);detectVisitorTimeZone();
