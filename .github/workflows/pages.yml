@@ -64,6 +64,8 @@ jobs:
                   html = read('')
                   assert '<title>IVE — Looks Can Kill</title>' in html, 'Landing page title missing'
                   assert 'class="hero-video"' in html, 'Video hero missing'
+                  assert 'id="schedule-drawer"' in html, 'Schedule drawer missing'
+                  assert 'id="count-days"' in html, 'Countdown missing'
                   assert 'href="style.css"' in html, 'Stylesheet link missing'
                   assert '.hero-video' in read('style.css'), 'Landing page stylesheet missing'
                   assert 'iBeo74ujfes' in read('script.js'), 'YouTube background script missing'
