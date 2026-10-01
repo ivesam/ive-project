@@ -17,11 +17,11 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           BRANCH="${GITHUB_REF_NAME}"
-          EXISTING=$(gh pr list --head "$BRANCH" --base main --state open --json number --jq '.[0].number')
+          EXISTING=$(gh pr list -R "$GITHUB_REPOSITORY" --head "$BRANCH" --base main --state open --json number --jq '.[0].number')
           if [ -n "$EXISTING" ] && [ "$EXISTING" != "null" ]; then
             echo "PR #$EXISTING already open for $BRANCH"
           else
-            gh pr create --head "$BRANCH" --base main \
+            gh pr create -R "$GITHUB_REPOSITORY" --head "$BRANCH" --base main \
               --title "Promo drop: ${BRANCH#promo/}" \
               --body "New IVE “Looks Can Kill” promo material. Context in the newest assets/promo/ batch directory (drop.json). The Codex automation will review the images and update the gallery."
             echo "PR created for $BRANCH"
