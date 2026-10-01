@@ -48,7 +48,7 @@ const formatScheduleHour=hour=>hour===null?'TBA':`${hour%12||12} ${hour>=12?'PM'
 function scheduleStatus(event,now,next){if(event===next)return 'Up next';if(event.at!==null)return event.at<=now?'Past':'Upcoming';const endOfDate=Date.parse(event.date+'T23:59:59+09:00');return endOfDate<now?'Date passed':'Time TBA'}
 function renderSchedule(now=Date.now()){
  const next=nextScheduledEvent(now);
- document.getElementById('schedule-table-body').innerHTML=comebackSchedule.map(event=>{const status=scheduleStatus(event,now,next);return `<tr class="${event===next?'next-row':status==='Past'||status==='Date passed'?'past-row':''}"><td>${formatScheduleDate(event.date)}</td><td>${event.name}</td><td>${formatScheduleHour(event.hour===null?null:event.hour-1)}</td><td>${formatScheduleHour(event.hour)}</td><td><span class="event-status">${status}</span></td></tr>`}).join('');
+ document.getElementById('schedule-table-body').innerHTML=comebackSchedule.map(event=>{const status=scheduleStatus(event,now,next);return `<tr class="${event===next?'next-row':status==='Past'||status==='Date passed'?'past-row':''}"><td data-label="Date">${formatScheduleDate(event.date)}</td><td data-label="Reveal">${event.name}</td><td data-label="MYT">${formatScheduleHour(event.hour===null?null:event.hour-1)}</td><td data-label="KST">${formatScheduleHour(event.hour)}</td><td data-label="Status"><span class="event-status">${status}</span></td></tr>`}).join('');
  document.getElementById('schedule-timeline').innerHTML=comebackSchedule.map(event=>`<div class="schedule-row ${event===next?'next-row':''} ${event.name==='Looks Can Kill release'?'highlight':''}"><time datetime="${event.date}">${event.date.slice(5,7)==='09'?'SEP':'OCT'} <b>${event.date.slice(8)}</b></time><div><strong>${event.name}</strong><span>${scheduleStatus(event,now,next)} · 2026</span></div><span class="time">${formatScheduleHour(event.hour===null?null:event.hour-1)} MYT<small>${formatScheduleHour(event.hour)} KST</small></span></div>`).join('');
 }
 let currentNextTimestamp;
@@ -79,3 +79,5 @@ const albumLinkArt=document.getElementById('album-link-art');
 function restoreAlbumArt(){albumLinkArt.src='assets/official-logo.jpg'}
 albumLinkArt.addEventListener('error',restoreAlbumArt,{once:true});
 if(albumLinkArt.complete&&albumLinkArt.naturalWidth===0)restoreAlbumArt();
+
+const heroVisibility=new IntersectionObserver(entries=>{document.body.classList.toggle('past-hero',!entries[0].isIntersecting)},{threshold:0});heroVisibility.observe(document.querySelector('.hero'));
