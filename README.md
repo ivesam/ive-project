@@ -6,7 +6,7 @@ The hero embeds https://www.youtube.com/watch?v=iBeo74ujfes as a muted, looping 
 
 ## Publish on GitHub Pages
 
-The GitHub Actions workflow `.github/workflows/pages.yml` publishes `docs/` whenever website files change on `main`. It also supports manual runs from the Actions tab.
+The GitHub Actions workflow `.github/workflows/pages.yml` publishes the website files at the repository root whenever website files change on `main`. It also supports manual runs from the Actions tab.
 
 The workflow attempts to enable GitHub Pages automatically. If GitHub refuses automatic enablement, open **Settings → Pages**, set **Source** to **GitHub Actions**, then rerun the failed workflow from the Actions tab.
 
@@ -14,7 +14,7 @@ The site URL appears in the successful workflow deployment and in repository Set
 
 ## Local preview
 
-From this repository, run `python -m http.server 8000 --directory docs` and open http://localhost:8000.
+From this repository, run `python -m http.server 8000` and open http://localhost:8000.
 
 YouTube playback requires internet access, embed permission from the video owner, and a served webpage. The photo fallback remains if playback fails.
 
