@@ -74,3 +74,8 @@ scheduleDock.addEventListener('click',openSchedule);document.querySelectorAll('[
 scheduleDrawer.querySelector('.drawer-close').addEventListener('click',()=>scheduleDrawer.close());
 scheduleDrawer.addEventListener('click',event=>{if(event.target===scheduleDrawer){const rect=scheduleDrawer.getBoundingClientRect();if(event.clientX<rect.left||event.clientX>rect.right||event.clientY<rect.top||event.clientY>rect.bottom)scheduleDrawer.close()}});
 scheduleDrawer.addEventListener('close',()=>{scheduleDock.setAttribute('aria-expanded','false');document.body.style.overflow='';scheduleTrigger?.focus()});
+
+const albumLinkArt=document.getElementById('album-link-art');
+function restoreAlbumArt(){albumLinkArt.src='assets/official-logo.jpg'}
+albumLinkArt.addEventListener('error',restoreAlbumArt,{once:true});
+if(albumLinkArt.complete&&albumLinkArt.naturalWidth===0)restoreAlbumArt();
