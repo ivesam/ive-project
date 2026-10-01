@@ -6,12 +6,11 @@ The hero embeds https://www.youtube.com/watch?v=iBeo74ujfes as a muted, looping 
 
 ## Publish on GitHub Pages
 
-1. Open repository **Settings → Pages**.
-2. Under **Build and deployment**, select **Deploy from a branch**.
-3. Choose branch **main** and folder **/docs**, then click **Save**.
-4. GitHub will display the website URL when deployment finishes.
+The GitHub Actions workflow `.github/workflows/pages.yml` publishes `docs/` whenever website files change on `main`. It also supports manual runs from the Actions tab.
 
-GitHub Pages for private repositories may require a paid GitHub plan. The repository's visibility has been preserved.
+The workflow attempts to enable GitHub Pages automatically. If GitHub refuses automatic enablement, open **Settings → Pages**, set **Source** to **GitHub Actions**, then rerun the failed workflow from the Actions tab.
+
+The site URL appears in the successful workflow deployment and in repository Settings → Pages.
 
 ## Local preview
 
