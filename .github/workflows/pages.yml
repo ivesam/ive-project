@@ -46,3 +46,32 @@ jobs:
       - name: Publish website
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Verify published landing page
+        env:
+          SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          SITE_COMMIT: ${{ github.sha }}
+        run: |
+          python - <<'PY'
+          import os, time, urllib.request
+          base = os.environ['SITE_URL'].rstrip('/') + '/'
+          query = '?verify=' + os.environ['SITE_COMMIT']
+          for attempt in range(18):
+              try:
+                  def read(path):
+                      request = urllib.request.Request(base + path + query, headers={'Cache-Control': 'no-cache'})
+                      with urllib.request.urlopen(request, timeout=20) as response:
+                          return response.read().decode()
+                  html = read('')
+                  assert '<title>IVE — Looks Can Kill</title>' in html, 'Landing page title missing'
+                  assert 'class="hero-video"' in html, 'Video hero missing'
+                  assert 'href="style.css"' in html, 'Stylesheet link missing'
+                  assert '.hero-video' in read('style.css'), 'Landing page stylesheet missing'
+                  assert 'iBeo74ujfes' in read('script.js'), 'YouTube background script missing'
+                  print('Verified live landing page, stylesheet, and YouTube background script at ' + base)
+                  break
+              except Exception as error:
+                  if attempt == 17:
+                      raise
+                  print('Waiting for published files: ' + str(error))
+                  time.sleep(5)
+          PY
