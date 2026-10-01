@@ -52,12 +52,17 @@ function formatKoreaDate(event){return koreaDateFormatter.format(scheduleInstant
 function eventZoneLabel(event){return visitorTimeZone==='Asia/Seoul'?'KST':isMalaysiaTime?'MYT':zoneNameFormatter.formatToParts(scheduleInstant(event)).find(part=>part.type==='timeZoneName').value}
 function formatLocalTime(event){return event.at===null?'TBA':localTimeFormatter.format(scheduleInstant(event))+' '+eventZoneLabel(event)}
 const formatScheduleHour=hour=>hour===null?'TBA':`${hour%12||12} ${hour>=12?'PM':'AM'}`;
+function hasKoreaReference(){return visitorTimeZone!=='Asia/Seoul'}
 function koreaReference(event){return formatScheduleHour(event.hour)+' KST'+(event.at!==null&&formatScheduleDate(event)!==formatKoreaDate(event)?' · '+formatKoreaDate(event):'')}
 function scheduleStatus(event,now,next){if(event===next)return 'Up next';if(event.at!==null)return event.at<=now?'Past':'Upcoming';const endOfDate=Date.parse(event.date+'T23:59:59+09:00');return endOfDate<now?'Date passed':'Time TBA'}
 const epRelease=comebackSchedule.find(event=>event.name==='Looks Can Kill release');
 function renderZoneDetails(){
  document.getElementById('schedule-zone-intro').textContent=locationTimeState==='pending'?'Detecting IP location · showing KST':locationTimeState==='unavailable'?'IP location unavailable · showing KST':(isMalaysiaTime?'Malaysia time (MYT)':'IP location time ('+visitorTimeZone.replaceAll('_',' ')+')')+' · Korea time (KST)';
  document.getElementById('local-time-heading').textContent=localTimeHeading;
+ document.getElementById('kst-time-heading').hidden=!hasKoreaReference();
+ document.querySelector('.schedule-table').classList.toggle('single-time',!hasKoreaReference());
+ document.querySelector('.schedule-table thead th:first-child').textContent=hasKoreaReference()?'Local date':'Date (KST)';
+ document.getElementById('ep-release-kst').hidden=!hasKoreaReference();
  const epReleaseParts=localDateFormatter.formatToParts(scheduleInstant(epRelease));
  document.getElementById('ep-release-date').innerHTML=epReleaseParts.find(part=>part.type==='month').value.toUpperCase()+'<span>'+epReleaseParts.find(part=>part.type==='day').value+'</span>';
  document.getElementById('ep-release-local').textContent=formatLocalTime(epRelease);
@@ -65,8 +70,8 @@ function renderZoneDetails(){
 renderZoneDetails();
 function renderSchedule(now=Date.now()){
  const next=nextScheduledEvent(now);
- document.getElementById('schedule-table-body').innerHTML=comebackSchedule.map(event=>{const status=scheduleStatus(event,now,next);return `<tr class="${event===next?'next-row':status==='Past'||status==='Date passed'?'past-row':''}"><td data-label="Local date">${formatScheduleDate(event)}${event.at===null?'<small class="schedule-date-note">KST date</small>':''}</td><td data-label="Reveal">${event.name}</td><td data-label="${localTimeHeading}">${formatLocalTime(event)}</td><td data-label="KST">${formatScheduleHour(event.hour)}${event.at!==null&&formatScheduleDate(event)!==formatKoreaDate(event)?'<small class="schedule-date-note">'+formatKoreaDate(event)+'</small>':''}</td><td data-label="Status"><span class="event-status">${status}</span></td></tr>`}).join('');
- document.getElementById('schedule-timeline').innerHTML=comebackSchedule.map(event=>{const parts=(event.at===null?koreaDateFormatter:localDateFormatter).formatToParts(scheduleInstant(event));const month=parts.find(part=>part.type==='month').value.toUpperCase();const day=parts.find(part=>part.type==='day').value;return `<div class="schedule-row ${event===next?'next-row':''} ${event.name==='Looks Can Kill release'?'highlight':''}"><time>${month} <b>${day}</b></time><div><strong>${event.name}</strong><span>${scheduleStatus(event,now,next)} · 2026${event.at===null?' · KST date':''}</span></div><span class="time">${formatLocalTime(event)}<small>${koreaReference(event)}</small></span></div>`}).join('');
+ document.getElementById('schedule-table-body').innerHTML=comebackSchedule.map(event=>{const status=scheduleStatus(event,now,next);return `<tr class="${event===next?'next-row':status==='Past'||status==='Date passed'?'past-row':''}"><td data-label="Local date">${formatScheduleDate(event)}${event.at===null?'<small class="schedule-date-note">KST date</small>':''}</td><td data-label="Reveal">${event.name}</td><td data-label="${localTimeHeading}">${formatLocalTime(event)}</td>${hasKoreaReference()?`<td data-label="KST">${formatScheduleHour(event.hour)}${event.at!==null&&formatScheduleDate(event)!==formatKoreaDate(event)?'<small class="schedule-date-note">'+formatKoreaDate(event)+'</small>':''}</td>`:''}<td data-label="Status"><span class="event-status">${status}</span></td></tr>`}).join('');
+ document.getElementById('schedule-timeline').innerHTML=comebackSchedule.map(event=>{const parts=(event.at===null?koreaDateFormatter:localDateFormatter).formatToParts(scheduleInstant(event));const month=parts.find(part=>part.type==='month').value.toUpperCase();const day=parts.find(part=>part.type==='day').value;return `<div class="schedule-row ${event===next?'next-row':''} ${event.name==='Looks Can Kill release'?'highlight':''}"><time>${month} <b>${day}</b></time><div><strong>${event.name}</strong><span>${scheduleStatus(event,now,next)} · 2026${event.at===null?' · KST date':''}</span></div><span class="time">${formatLocalTime(event)}${hasKoreaReference()?'<small>'+koreaReference(event)+'</small>':''}</span></div>`}).join('');
 }
 let currentNextTimestamp;
 function updateCountdown(now=Date.now()){
@@ -74,7 +79,7 @@ function updateCountdown(now=Date.now()){
  if(currentNextTimestamp!==(next?.at??null)){
   currentNextTimestamp=next?.at??null;
   document.getElementById('next-event-name').textContent=next?next.name:'All timed reveals have arrived.';
-  document.getElementById('next-event-date').textContent=next?`${formatScheduleDate(next)} 2026 · ${formatLocalTime(next)} / ${koreaReference(next)}`:'Explore the full schedule and visual archive.';
+  document.getElementById('next-event-date').textContent=next?`${formatScheduleDate(next)} 2026 · ${formatLocalTime(next)}${hasKoreaReference()?' / '+koreaReference(next):''}`:'Explore the full schedule and visual archive.';
   renderSchedule(now);
  }
  const seconds=next?Math.max(0,Math.ceil((next.at-now)/1000)):0;
