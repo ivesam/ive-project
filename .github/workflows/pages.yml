@@ -70,7 +70,10 @@ jobs:
                   assert '.hero-video' in read('style.css'), 'Landing page stylesheet missing'
                   assert '<video id="hero-player"' in html, 'Native video background missing'
                   assert 'assets/ive-theater-background.mp4' in html, 'MP4 source missing'
-                  assert 'youtube.com/iframe_api' not in read('script.js'), 'External video player still present'
+                  script = read('script.js')
+                  assert 'youtube.com/iframe_api' not in script, 'External video player still present'
+                  assert 'function readFreeIPLocation' in script, 'Regional IP time-zone fix missing'
+                  assert 'function tzlookup' in read('assets/vendor/tz-lookup.js'), 'Regional time-zone data missing'
                   request = urllib.request.Request(base + 'assets/ive-theater-background.mp4' + query, headers={'Range': 'bytes=0-31'})
                   with urllib.request.urlopen(request, timeout=30) as response:
                       assert b'ftyp' in response.read(32), 'Published MP4 is invalid'

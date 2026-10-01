@@ -19,3 +19,5 @@ From this repository, run `python -m http.server 8000` and open http://localhost
 The background video is served directly from assets/ive-theater-background.mp4. It does not use a YouTube player.
 
 Fan-made experience. Supplied imagery belongs to STARSHIP Entertainment. The video was supplied by the user.
+
+IP location: ipapi.co is tried first, with FreeIPAPI as fallback. FreeIPAPI country-wide `timeZones` are resolved using its IP geolocation coordinates and the bundled [tz-lookup 6.1.25](https://github.com/darkskyapp/tz-lookup) (CC0; license in assets/vendor). This does not use device time zone or browser location permissions. IP geolocation is approximate, including when using a VPN. If both lookups fail, only KST is shown.

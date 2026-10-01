@@ -142,9 +142,25 @@ function applyScheduleZone(zone,message){
  renderZoneDetails();currentNextTimestamp=undefined;updateCountdown();timezoneStatus.textContent=message+' '+validated.replaceAll('_',' ');
 }
 
+// FreeIPAPI timeZones lists every zone in the country, not the visitor's region.
+// Resolve the IP's coordinates locally; no device location or extra API is used.
+function readFreeIPLocation(data){
+ let timezone=typeof data.timezone==='string'?data.timezone:data.timezone?.id;
+ const latitude=data.latitude,longitude=data.longitude;
+ if(!timezone&&typeof latitude==='number'&&typeof longitude==='number'
+  &&Number.isFinite(latitude)&&Number.isFinite(longitude)
+  &&Math.abs(latitude)<=90&&Math.abs(longitude)<=180
+  &&(latitude!==0||longitude!==0)&&typeof tzlookup==='function'){
+  timezone=tzlookup(latitude,longitude);
+ }
+ const zones=Array.isArray(data.timeZones)?data.timeZones.filter(zone=>typeof zone==='string'&&zone):[];
+ if(!timezone&&zones.length===1)timezone=zones[0];
+ if(!timezone&&zones.length>1)throw new Error('Multiple country time zones returned without usable regional coordinates');
+ return {timezone,country:data.countryName,error:data.error};
+}
 const locationProviders=[
  {name:'ipapi.co',url:'https://ipapi.co/json/',read:data=>({timezone:data.timezone,country:data.country_name,error:data.error})},
- {name:'FreeIPAPI',url:'https://free.freeipapi.com/api/json',read:data=>({timezone:Array.isArray(data.timeZones)?(data.timeZones.length===1?data.timeZones[0]:null):data.timezone?.id||data.timezone,country:data.countryName,error:data.error})}
+ {name:'FreeIPAPI',url:'https://free.freeipapi.com/api/json',read:readFreeIPLocation}
 ];
 function locationFailureMessage(error){
  if(error.name==='AbortError')return 'Request timed out';
