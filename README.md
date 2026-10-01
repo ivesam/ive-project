@@ -2,7 +2,7 @@
 
 A responsive cinematic comeback landing page using the supplied IVE imagery, with an interactive gallery and a release calendar.
 
-The hero embeds https://www.youtube.com/watch?v=iBeo74ujfes as a muted, looping background with play/pause controls. It keeps the photo visible until playback starts and respects reduced-motion preferences.
+The hero embeds https://www.youtube.com/watch?v=iBeo74ujfes as a muted, looping background without an image carousel or playback button. A single still is retained as a loading/error fallback and respects reduced-motion preferences.
 
 ## Publish on GitHub Pages
 
