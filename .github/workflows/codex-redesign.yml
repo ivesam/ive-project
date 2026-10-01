@@ -1,0 +1,46 @@
+name: Codex redesign on new promo drop
+
+on:
+  push:
+    branches: [main]
+    paths: ['assets/promo/**']
+
+permissions:
+  contents: write
+
+jobs:
+  redesign:
+    runs-on: ubuntu-latest
+    # Don't re-trigger on Codex's own commits.
+    if: "!contains(github.event.head_commit.message, '[codex-redesign]')"
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Codex reviews new images and redesigns the gallery
+        uses: openai/codex-action@v1
+        with:
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          sandbox: workspace-write
+          safety-strategy: drop-sudo
+          prompt: |
+            New IVE "Looks Can Kill" promo images were just added under assets/promo/.
+            1. Find the newest batch directory under assets/promo/ (the one from this
+               push) and read its drop.json for context: official post link, release
+               time, and a description of each image.
+            2. Look at each new image yourself (subject, mood, colors, composition).
+            3. Update the Visual Archive gallery in index.html: add one card per new
+               image using the existing gallery-card markup and design language, with
+               titles/captions/tags matching what you see; reorder or rebalance the
+               gallery if the new material warrants it.
+            4. Write a short report to <batch-dir>/codex-report.md describing what you
+               changed and why, addressed to the promo-watch assistant.
+            Only modify the gallery section of index.html and the new batch directory.
+            Do not touch the hero, schedule, or other sections.
+
+      - name: Commit and push redesign
+        run: |
+          git config user.name "codex-bot"
+          git config user.email "codex-bot@users.noreply.github.com"
+          git add index.html "assets/promo/*/codex-report.md"
+          git diff --cached --quiet || git commit -m "[codex-redesign] gallery update for new promo drop"
+          git push
