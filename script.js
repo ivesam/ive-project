@@ -38,10 +38,10 @@ const comebackSchedule=[
  ['10-26','Spin-off concept photo',17],['10-26','Spin-off film',18],['10-26','Album release',null]
 ].map(([date,name,hour])=>({date:'2026-'+date,name,hour,at:hour===null?null:Date.parse(`2026-${date}T${String(hour).padStart(2,'0')}:00:00+09:00`)}));
 function nextScheduledEvent(now=Date.now()){return comebackSchedule.filter(e=>e.at!==null&&e.at>now).sort((a,b)=>a.at-b.at)[0]||null}
-const deviceTimeZone=Intl.DateTimeFormat().resolvedOptions().timeZone||'UTC';
-let visitorTimeZone=deviceTimeZone;
+let visitorTimeZone='Asia/Seoul';
+let locationTimeState='pending';
 let isMalaysiaTime=['Asia/Kuala_Lumpur','Asia/Kuching'].includes(visitorTimeZone);
-let localTimeHeading=isMalaysiaTime?'MYT':'Local time';
+let localTimeHeading='KST';
 let localDateFormatter=new Intl.DateTimeFormat('en-GB',{month:'short',day:'numeric',timeZone:visitorTimeZone});
 const koreaDateFormatter=new Intl.DateTimeFormat('en-GB',{month:'short',day:'numeric',timeZone:'Asia/Seoul'});
 let localTimeFormatter=new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',hour12:true,timeZone:visitorTimeZone});
@@ -49,14 +49,14 @@ let zoneNameFormatter=new Intl.DateTimeFormat('en-US',{timeZone:visitorTimeZone,
 function scheduleInstant(event){return new Date(event.at===null?event.date+'T12:00:00+09:00':event.at)}
 function formatScheduleDate(event){return event.at===null?koreaDateFormatter.format(scheduleInstant(event)):localDateFormatter.format(scheduleInstant(event))}
 function formatKoreaDate(event){return koreaDateFormatter.format(scheduleInstant(event))}
-function eventZoneLabel(event){return isMalaysiaTime?'MYT':zoneNameFormatter.formatToParts(scheduleInstant(event)).find(part=>part.type==='timeZoneName').value}
+function eventZoneLabel(event){return visitorTimeZone==='Asia/Seoul'?'KST':isMalaysiaTime?'MYT':zoneNameFormatter.formatToParts(scheduleInstant(event)).find(part=>part.type==='timeZoneName').value}
 function formatLocalTime(event){return event.at===null?'TBA':localTimeFormatter.format(scheduleInstant(event))+' '+eventZoneLabel(event)}
 const formatScheduleHour=hour=>hour===null?'TBA':`${hour%12||12} ${hour>=12?'PM':'AM'}`;
 function koreaReference(event){return formatScheduleHour(event.hour)+' KST'+(event.at!==null&&formatScheduleDate(event)!==formatKoreaDate(event)?' · '+formatKoreaDate(event):'')}
 function scheduleStatus(event,now,next){if(event===next)return 'Up next';if(event.at!==null)return event.at<=now?'Past':'Upcoming';const endOfDate=Date.parse(event.date+'T23:59:59+09:00');return endOfDate<now?'Date passed':'Time TBA'}
 const epRelease=comebackSchedule.find(event=>event.name==='Looks Can Kill release');
 function renderZoneDetails(){
- document.getElementById('schedule-zone-intro').textContent=(isMalaysiaTime?'Malaysia time (MYT)':'Local time ('+visitorTimeZone.replaceAll('_',' ')+')')+' · Korea time (KST)';
+ document.getElementById('schedule-zone-intro').textContent=locationTimeState==='pending'?'Detecting IP location · showing KST':locationTimeState==='unavailable'?'IP location unavailable · showing KST':(isMalaysiaTime?'Malaysia time (MYT)':'IP location time ('+visitorTimeZone.replaceAll('_',' ')+')')+' · Korea time (KST)';
  document.getElementById('local-time-heading').textContent=localTimeHeading;
  const epReleaseParts=localDateFormatter.formatToParts(scheduleInstant(epRelease));
  document.getElementById('ep-release-date').innerHTML=epReleaseParts.find(part=>part.type==='month').value.toUpperCase()+'<span>'+epReleaseParts.find(part=>part.type==='day').value+'</span>';
@@ -125,38 +125,35 @@ function showClickStarburst(event){
 document.addEventListener('click',showClickStarburst);
 motionPreference.addEventListener('change',event=>{if(event.matches)clearStarbursts()});
 
-// Prefer the visitor's network location; manual and device choices stay available.
-const timezonePicker=document.getElementById('schedule-timezone');
+// Automatic IP location only: never infer location from device settings.
 const timezoneStatus=document.getElementById('timezone-status');
-const commonZones=[['Malaysia','Asia/Kuala_Lumpur'],['US · Eastern','America/New_York'],['US · Central','America/Chicago'],['US · Mountain','America/Denver'],['US · Arizona','America/Phoenix'],['US · Pacific','America/Los_Angeles'],['US · Alaska','America/Anchorage'],['US · Hawaii','Pacific/Honolulu'],['UTC','UTC']];
-const commonGroup=document.createElement('optgroup');commonGroup.label='Common time zones';
-commonZones.forEach(([label,zone])=>commonGroup.appendChild(new Option(label,zone)));timezonePicker.appendChild(commonGroup);
-const allZones=typeof Intl.supportedValuesOf==='function'?Intl.supportedValuesOf('timeZone'):[];
-const otherGroup=document.createElement('optgroup');otherGroup.label='Other time zones';
-allZones.filter(zone=>!commonZones.some(item=>item[1]===zone)).forEach(zone=>otherGroup.appendChild(new Option(zone.replaceAll('_',' '),zone)));timezonePicker.appendChild(otherGroup);
+const timezoneRetry=document.getElementById('timezone-retry');
 function applyScheduleZone(zone,message){
  const validated=new Intl.DateTimeFormat('en-US',{timeZone:zone}).resolvedOptions().timeZone;
- visitorTimeZone=validated;isMalaysiaTime=['Asia/Kuala_Lumpur','Asia/Kuching'].includes(validated);localTimeHeading=isMalaysiaTime?'MYT':'Local time';
+ visitorTimeZone=validated;isMalaysiaTime=['Asia/Kuala_Lumpur','Asia/Kuching'].includes(validated);localTimeHeading=validated==='Asia/Seoul'?'KST':isMalaysiaTime?'MYT':'Local time';
  localDateFormatter=new Intl.DateTimeFormat('en-GB',{month:'short',day:'numeric',timeZone:validated});
  localTimeFormatter=new Intl.DateTimeFormat('en-US',{hour:'numeric',minute:'2-digit',hour12:true,timeZone:validated});
  zoneNameFormatter=new Intl.DateTimeFormat('en-US',{timeZone:validated,timeZoneName:'short'});
  renderZoneDetails();currentNextTimestamp=undefined;updateCountdown();timezoneStatus.textContent=message+' '+validated.replaceAll('_',' ');
 }
+
 let timezoneRequestNumber=0;
-async function chooseScheduleZone(){
- const requestNumber=++timezoneRequestNumber;const preference=timezonePicker.value;
- try{localStorage.setItem('ive-schedule-timezone',preference)}catch{}
- if(preference!=='auto'){applyScheduleZone(preference==='device'?deviceTimeZone:preference,preference==='device'?'Using device time zone:':'Selected time zone:');return}
- timezoneStatus.textContent='Detecting location… Device time is shown while waiting.';
+async function detectVisitorTimeZone(){
+ const requestNumber=++timezoneRequestNumber;
+ locationTimeState='pending';renderZoneDetails();timezoneRetry.disabled=true;
+ timezoneStatus.textContent='Detecting your IP location… Showing KST until detected.';
+ applyScheduleZone('Asia/Seoul','Detecting your IP location; temporarily showing KST:');
  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),4500);
  try{
   const response=await fetch('https://ipapi.co/json/',{signal:controller.signal,credentials:'omit',referrerPolicy:'no-referrer'});
   if(!response.ok)throw new Error('Location lookup unavailable');const result=await response.json();
   if(result.error||typeof result.timezone!=='string')throw new Error('Location time zone unavailable');
   if(requestNumber!==timezoneRequestNumber)return;
-  applyScheduleZone(result.timezone,'Using visitor location:');
- }catch{if(requestNumber===timezoneRequestNumber)applyScheduleZone(deviceTimeZone,'Location unavailable; using device time zone. You can select another above:')}
- finally{clearTimeout(timeout)}
+  locationTimeState='detected';
+  const country=typeof result.country_name==='string'?result.country_name+' · ':'';
+  applyScheduleZone(result.timezone,'IP location: '+country);
+ }catch{if(requestNumber===timezoneRequestNumber){locationTimeState='unavailable';applyScheduleZone('Asia/Seoul','IP location unavailable; showing Korea time (KST):')}}
+ finally{clearTimeout(timeout);if(requestNumber===timezoneRequestNumber)timezoneRetry.disabled=false}
 }
-try{const saved=localStorage.getItem('ive-schedule-timezone');if(saved&&[...timezonePicker.options].some(option=>option.value===saved))timezonePicker.value=saved}catch{}
-timezonePicker.addEventListener('change',chooseScheduleZone);chooseScheduleZone();
+try{localStorage.removeItem('ive-schedule-timezone')}catch{}
+timezoneRetry.addEventListener('click',detectVisitorTimeZone);detectVisitorTimeZone();
