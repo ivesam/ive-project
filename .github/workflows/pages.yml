@@ -86,6 +86,18 @@ jobs:
                   request = urllib.request.Request(base + 'assets/ive-theater-background.mp4' + query, headers={'Range': 'bytes=0-31'})
                   with urllib.request.urlopen(request, timeout=30) as response:
                       assert b'ftyp' in response.read(32), 'Published MP4 is invalid'
+                  if 'id="video-tracker"' in html:
+                      import json
+                      history = json.loads(read('assets/youtube/daily.json'))
+                      assert history['video_id'] == 'XJzRgeX-bwo', 'Wrong tracked video'
+                      assert 'function selectDay' in read('assets/youtube/tracker.js'), 'Tracker script missing'
+                      assert history['snapshots'], 'Initial YouTube snapshot missing'
+                      latest = history['snapshots'][-1]
+                      assert isinstance(latest['views'], int), 'Invalid view total'
+                      assert latest['comment_status'] in ('available', 'no_comments', 'disabled'), 'Invalid comment status'
+                      if latest['comment_status'] == 'available':
+                          assert latest['top_comment']['id'], 'Comment missing'
+                      print('Verified live YouTube tracker: ' + str(len(history['snapshots'])) + ' snapshots; latest views: ' + str(latest['views']))
                   print('Verified live landing page, stylesheet, and native MP4 background at ' + base)
                   break
               except Exception as error:
