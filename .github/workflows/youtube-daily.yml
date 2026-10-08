@@ -1,6 +1,11 @@
 name: Track YouTube daily views
 
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/youtube-daily.yml'
+      - 'scripts/track_youtube.py'
   schedule:
     - cron: '55 15 * * *' # 23:55 Asia/Kuala_Lumpur; GitHub may run this late.
   workflow_dispatch:
