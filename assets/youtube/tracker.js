@@ -4,7 +4,7 @@
   if (!status) return;
   const fmt = new Intl.NumberFormat('en-US');
   const dateFmt = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' });
-  const timeFmt = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kuala_Lumpur' });
+  const timeFmt = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Seoul' });
   const dayLabel = day => dateFmt.format(new Date(day + 'T00:00:00Z'));
   const signed = n => (n > 0 ? '+' : n < 0 ? '−' : '') + fmt.format(Math.abs(n));
   let records = [];
@@ -20,7 +20,7 @@
     byId('tracker-views').textContent = fmt.format(record.views);
     byId('tracker-gain').textContent = delta === null ? '—' : signed(delta);
     byId('tracker-growth').textContent = delta === null ? 'No snapshot for the previous day' : records[index - 1].views ? signed(Math.round(delta / records[index - 1].views * 10000) / 100) + '%' : 'Percentage unavailable from a zero baseline';
-    byId('tracker-captured').textContent = 'Captured ' + timeFmt.format(new Date(record.captured_at)) + ' MYT';
+    byId('tracker-captured').textContent = 'Captured ' + timeFmt.format(new Date(record.captured_at)) + ' KST';
     const comment = record.top_comment;
     byId('tracker-comment-text').textContent = comment ? comment.text : record.comment_status === 'disabled' ? 'Comments are disabled for this video.' : 'No comments posted this day were available at capture time.';
     byId('tracker-comment-meta').textContent = comment ? comment.author + ' · ' + fmt.format(comment.likes) + ' likes at capture' : '';

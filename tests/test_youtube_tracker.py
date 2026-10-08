@@ -9,8 +9,8 @@ from pathlib import Path
 spec = importlib.util.spec_from_file_location('tracker', Path(__file__).resolve().parents[1] / 'scripts/track_youtube.py')
 tracker = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(tracker)
-START = datetime(2026, 10, 7, 16, tzinfo=timezone.utc) # Midnight Oct 8 MYT
-END = datetime(2026, 10, 8, 15, 55, tzinfo=timezone.utc)
+START = datetime(2026, 10, 7, 15, tzinfo=timezone.utc) # Midnight Oct 8 KST
+END = datetime(2026, 10, 8, 14, 55, tzinfo=timezone.utc)
 
 
 def comment(id, time, likes):
@@ -20,8 +20,8 @@ def comment(id, time, likes):
 class TrackerTest(unittest.TestCase):
     def test_scan_pages_and_exclude_other_days(self):
         pages = iter([
-            {'items': [comment('future', '2026-10-08T16:00:00Z', 500), comment('recent', '2026-10-08T14:00:00Z', 4)], 'nextPageToken': 'second'},
-            {'items': [comment('winner', '2026-10-07T16:00:00Z', 30), comment('old', '2026-10-07T15:59:59Z', 999)], 'nextPageToken': 'unused'}])
+            {'items': [comment('future', '2026-10-08T15:00:00Z', 500), comment('recent', '2026-10-08T14:00:00Z', 4)], 'nextPageToken': 'second'},
+            {'items': [comment('winner', '2026-10-07T15:00:00Z', 30), comment('old', '2026-10-07T14:59:59Z', 999)], 'nextPageToken': 'unused'}])
         tokens = []
         def fetch(resource, params):
             tokens.append(params.get('pageToken'))

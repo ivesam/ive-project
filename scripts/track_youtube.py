@@ -11,7 +11,7 @@ from urllib.request import Request, urlopen
 from zoneinfo import ZoneInfo
 
 VIDEO_ID = 'XJzRgeX-bwo'
-ZONE = ZoneInfo('Asia/Kuala_Lumpur')
+ZONE = ZoneInfo('Asia/Seoul')
 DATA = Path(__file__).resolve().parents[1] / 'assets/youtube/daily.json'
 
 
