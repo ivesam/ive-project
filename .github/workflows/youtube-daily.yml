@@ -52,3 +52,5 @@ jobs:
     needs: collect
     if: needs.collect.outputs.changed == 'true'
     uses: ./.github/workflows/pages.yml
+    with:
+      source_ref: main

@@ -12,6 +12,12 @@ on:
       - '.github/workflows/pages.yml'
   workflow_dispatch:
   workflow_call:
+    inputs:
+      source_ref:
+        description: Commit or branch to publish after collection
+        required: false
+        type: string
+        default: ""
 
 permissions:
   contents: read
@@ -31,6 +37,8 @@ jobs:
     steps:
       - name: Check out the website
         uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.source_ref || github.sha }}
       - name: Configure GitHub Pages
         uses: actions/configure-pages@v5
         with:
