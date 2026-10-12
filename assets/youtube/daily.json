@@ -16,7 +16,8 @@
             "text": "I've (no pun intended) been dying to see 1 of my favorite groups do a superhero concept. This is going to be the COOLEST. Can't wait to buy the photobook + album!!",
             "likes": 5,
             "published_at": "2026-10-07T23:30:55Z",
-            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgxHd0Gdw7GXMRDKzs14AaABAg"
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgxHd0Gdw7GXMRDKzs14AaABAg",
+            "source_language": "en"
           },
           "comment_status": "available"
         },
@@ -30,7 +31,8 @@
             "text": "the budget's nowhere to be found",
             "likes": 2,
             "published_at": "2026-10-08T15:51:57Z",
-            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=Ugwa0wCs_258mjzR4mh4AaABAg"
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=Ugwa0wCs_258mjzR4mh4AaABAg",
+            "source_language": "en"
           },
           "comment_status": "available"
         },
@@ -44,7 +46,14 @@
             "text": "아이브한테 돈 좀 써주면 안되납",
             "likes": 1,
             "published_at": "2026-10-09T15:26:50Z",
-            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=Ugxzmz68z2G-KGh1Sa94AaABAg"
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=Ugxzmz68z2G-KGh1Sa94AaABAg",
+            "source_language": "ko",
+            "translation": {
+              "text": "Can't they spend some money on IVE?",
+              "language": "en",
+              "provider": "Gemini",
+              "model": "gemini-3.8-flash"
+            }
           },
           "comment_status": "available"
         },
@@ -58,7 +67,8 @@
             "text": "the ai is something….",
             "likes": 0,
             "published_at": "2026-10-10T15:09:34Z",
-            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgzvRCXZY5aCtEhIwwx4AaABAg"
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgzvRCXZY5aCtEhIwwx4AaABAg",
+            "source_language": "en"
           },
           "comment_status": "available"
         },
@@ -72,7 +82,14 @@
             "text": "1:01 가을선배 어디갔냐",
             "likes": 0,
             "published_at": "2026-10-11T15:32:17Z",
-            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgxFOlDlzn8z7wdV0s54AaABAg"
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgxFOlDlzn8z7wdV0s54AaABAg",
+            "source_language": "ko",
+            "translation": {
+              "text": "1:01 Where did Gaeul sunbae go?",
+              "language": "en",
+              "provider": "Gemini",
+              "model": "gemini-3.8-flash"
+            }
           },
           "comment_status": "available"
         }
@@ -93,7 +110,8 @@
             "text": "Reis hair is so cool",
             "likes": 14,
             "published_at": "2026-10-11T19:54:03Z",
-            "url": "https://www.youtube.com/watch?v=vQ5mF2zKEj0&lc=UgxezzL_aePSOIMd4_54AaABAg"
+            "url": "https://www.youtube.com/watch?v=vQ5mF2zKEj0&lc=UgxezzL_aePSOIMd4_54AaABAg",
+            "source_language": "en"
           },
           "comment_status": "available"
         }
