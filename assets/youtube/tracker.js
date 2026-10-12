@@ -50,7 +50,12 @@
   function selectVideo(video) {
     selectedId = video.video_id;
     records = [...video.snapshots].sort((a, b) => a.date.localeCompare(b.date));
-    byId('tracker-videos').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.video === selectedId)));
+    byId('tracker-videos').querySelectorAll('button').forEach(button => {
+      const active = button.dataset.video === selectedId;
+      button.setAttribute('aria-pressed', String(active));
+      button.querySelector('.tracker-card-action').textContent = active ? 'Viewing daily stats' : 'View daily stats →';
+      button.querySelector('.tracker-card-state').textContent = active ? 'SELECTED' : 'TRACKING';
+    });
     byId('tracker-watch').href = 'https://www.youtube.com/watch?v=' + selectedId;
     byId('tracker-title').textContent = video.title || 'YouTube video';
     const selector = byId('tracker-day'), rows = byId('tracker-rows'); selector.replaceChildren(); rows.replaceChildren();
@@ -82,10 +87,17 @@
       byId('tracker-count').textContent = videos.length + (videos.length === 1 ? ' video' : ' videos') + ' · updated daily in KST';
       for (const video of videos) {
         const button = document.createElement('button'); button.type = 'button'; button.className = 'tracker-video-card'; button.dataset.video = video.video_id;
-        const image = document.createElement('img'); image.src = 'https://i.ytimg.com/vi/' + video.video_id + '/hqdefault.jpg'; image.alt = ''; image.width = 480; image.height = 270; image.loading = 'lazy'; button.append(image);
+        const media = document.createElement('span'); media.className = 'tracker-card-media';
+        const image = document.createElement('img'); image.src = 'https://i.ytimg.com/vi/' + video.video_id + '/hqdefault.jpg'; image.alt = ''; image.width = 480; image.height = 270; image.loading = 'lazy';
+        const fallback = document.createElement('span'); fallback.className = 'tracker-thumbnail-fallback'; fallback.textContent = '▶︎'; fallback.setAttribute('aria-hidden', 'true');
+        image.addEventListener('error', () => { image.hidden = true; }); media.append(fallback, image);
+        const state = document.createElement('span'); state.className = 'tracker-card-state'; state.textContent = 'TRACKING'; media.append(state); button.append(media);
         const copy = document.createElement('span'); copy.className = 'tracker-video-copy';
-        const title = document.createElement('strong'); title.textContent = video.title || 'YouTube video'; copy.append(title);
-        const total = document.createElement('span'), latest = [...video.snapshots].sort((a, b) => a.date.localeCompare(b.date)).at(-1); total.textContent = latest ? fmt.format(latest.views) + ' views · ' + dayLabel(latest.date) : 'Awaiting first capture'; copy.append(total); button.append(copy);
+        const title = document.createElement('strong'); title.textContent = (video.title || 'YouTube video').replace(/^IVE 아이브\s*/i, '').replace(/\s*Video$/i, '').replace(/^[‘'"]|[’'"]$/g, ''); copy.append(title);
+        const latest = [...video.snapshots].sort((a, b) => a.date.localeCompare(b.date)).at(-1);
+        const total = document.createElement('span'); total.className = 'tracker-card-total'; total.textContent = latest ? fmt.format(latest.views) + ' views' : 'Awaiting first capture'; copy.append(total);
+        const date = document.createElement('span'); date.className = 'tracker-card-date'; date.textContent = latest ? 'Last captured ' + dayLabel(latest.date) + ' · KST' : 'Daily capture at 23:55 KST'; copy.append(date);
+        const action = document.createElement('span'); action.className = 'tracker-card-action'; action.textContent = 'View daily stats →'; copy.append(action); button.append(copy);
         button.addEventListener('click', () => selectVideo(video)); byId('tracker-videos').append(button);
       }
       byId('tracker-day').addEventListener('change', () => selectDay(Number(byId('tracker-day').value)));
