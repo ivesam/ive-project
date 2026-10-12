@@ -127,6 +127,33 @@ class TrackerTest(unittest.TestCase):
             self.assertFalse(tracker.enrich_translations([{'snapshots': [{'top_comment': {'text': 'Original', 'source_language': 'en'}}]}], 'test-only'))
             fetch.assert_not_called()
 
+    def test_gemini_translates_other_languages_and_keeps_en_zh(self):
+        for language in ['en', 'zh', 'ko', 'ja']:
+            comment = {'text': 'Original text'}
+            output = json.dumps({'source_language': language, 'translated_text': 'Translated text' if language not in ('en', 'zh') else ''})
+            response = BytesIO(json.dumps({'candidates': [{'content': {'parts': [{'text': output}]}}]}).encode())
+            with patch.object(tracker, 'urlopen', return_value=response) as fetch:
+                self.assertTrue(tracker.translate_comment_gemini(comment, 'test-only'))
+                request = fetch.call_args.args[0]
+                self.assertNotIn('test-only', request.full_url)
+                self.assertIn('gemini-3.8-flash:generateContent', request.full_url)
+            self.assertEqual(comment['text'], 'Original text')
+            if language in ('en', 'zh'):
+                self.assertNotIn('translation', comment)
+            else:
+                self.assertEqual(comment['translation']['model'], 'gemini-3.8-flash')
+                self.assertEqual(comment['translation']['text'], 'Translated text')
+
+    def test_invalid_gemini_response_keeps_original_and_retries(self):
+        comment = {'text': 'Original text'}
+        response = BytesIO(json.dumps({'candidates': [{'content': {'parts': [{'text': '{"source_language":"ko","translated_text":""}'}]}}]}).encode())
+        with patch.object(tracker, 'urlopen', return_value=response):
+            self.assertFalse(tracker.translate_comment_gemini(comment, 'test-only'))
+        self.assertNotIn('source_language', comment)
+        self.assertNotIn('translation', comment)
+        self.assertEqual(comment['text'], 'Original text')
+        self.assertEqual(comment['translation_status'], 'unavailable')
+
     def test_repeat_capture_does_not_replace_baseline(self):
         data = {'snapshots': [{'date': '2026-10-08', 'views': 100}]}
         tracker.save_snapshot(data, {'date': '2026-10-08', 'views': 150})
