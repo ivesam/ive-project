@@ -1,0 +1,40 @@
+name: Verify Gemini comment translation
+on:
+  push:
+    branches: [feat/gemini-comment-translation]
+    paths: ['.github/workflows/gemini-verify.yml']
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify available model and translation
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python - <<'PY'
+          import json, os, urllib.request, urllib.error
+          key = os.environ.get('GEMINI_API_KEY')
+          if not key:
+              raise SystemExit('GEMINI_API_KEY secret is missing or empty')
+          headers = {'x-goog-api-key': key, 'Content-Type': 'application/json'}
+          def request(path, payload=None):
+              try:
+                  with urllib.request.urlopen(urllib.request.Request('https://generativelanguage.googleapis.com/v1beta/' + path, headers=headers, data=json.dumps(payload).encode() if payload else None), timeout=60) as response:
+                      return json.load(response)
+              except urllib.error.HTTPError as error:
+                  raise SystemExit('Gemini API request failed: HTTP ' + str(error.code)) from None
+          models = request('models').get('models', [])
+          names = [m['name'] for m in models if 'generateContent' in m.get('supportedGenerationMethods', []) and 'flash' in m['name'] and not any(x in m['name'] for x in ['image', 'audio', 'tts', 'live'])]
+          print('Available Flash models: ' + ', '.join(names))
+          model = next((m for m in names if m == 'models/gemini-2.5-flash'), next((m for m in names if 'preview' not in m and 'latest' not in m), None))
+          if not model:
+              raise SystemExit('No compatible Flash model is available')
+          payload = {'contents': [{'parts': [{'text': 'Translate this Korean comment into English: 정말 좋아요. Return JSON with source_language and translated_text.'}]}], 'generationConfig': {'responseMimeType': 'application/json'}}
+          result = request(model + ':generateContent', payload)
+          text = ''.join(p.get('text', '') for p in result['candidates'][0]['content']['parts'])
+          output = json.loads(text)
+          assert output['source_language'].lower() in ('ko', 'korean') and output['translated_text'].strip(), 'Unexpected translation result'
+          print('Verified Gemini key and Korean-to-English translation using ' + model)
+          PY
