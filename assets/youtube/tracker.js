@@ -22,7 +22,12 @@
     byId('tracker-growth').textContent = delta === null ? 'No snapshot for the previous day' : records[index - 1].views ? signed(Math.round(delta / records[index - 1].views * 10000) / 100) + '%' : 'Percentage unavailable from a zero baseline';
     byId('tracker-captured').textContent = 'Captured ' + timeFmt.format(new Date(record.captured_at)) + ' KST';
     const comment = record.top_comment;
-    byId('tracker-comment-text').textContent = comment ? comment.text : record.comment_status === 'disabled' ? 'Comments are disabled for this video.' : 'No comments posted this day were available at capture time.';
+    const translation = comment?.translation?.language === 'en' ? comment.translation.text : null;
+    byId('tracker-translation-label').hidden = !translation;
+    byId('tracker-original').hidden = !translation;
+    byId('tracker-original').open = false;
+    byId('tracker-original-text').textContent = comment?.text || '';
+    byId('tracker-comment-text').textContent = comment ? translation || comment.text : record.comment_status === 'disabled' ? 'Comments are disabled for this video.' : 'No comments posted this day were available at capture time.';
     byId('tracker-comment-meta').textContent = comment ? comment.author + ' · ' + fmt.format(comment.likes) + ' likes at capture' : '';
     byId('tracker-comment-link').hidden = !comment;
     if (comment) byId('tracker-comment-link').href = 'https://www.youtube.com/watch?v=' + selectedId + '&lc=' + encodeURIComponent(comment.id);

@@ -2,6 +2,8 @@ import importlib.util
 import unittest
 import tempfile
 from unittest.mock import patch
+from io import BytesIO
+from urllib.error import URLError
 import json
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
@@ -92,6 +94,38 @@ class TrackerTest(unittest.TestCase):
                 with self.assertRaises(tracker.APIError):
                     tracker.main()
             self.assertEqual(path.read_text(), original)
+
+    def test_translations_keep_english_and_chinese_original(self):
+        for language in ['en', 'zh-CN', 'zh-TW', 'ko']:
+            original = {'text': 'Original comment'}
+            response = BytesIO(json.dumps({'data': {'translations': [{'detectedSourceLanguage': language, 'translatedText': 'Hello &amp; welcome'}]}}).encode())
+            with patch.object(tracker, 'urlopen', return_value=response):
+                self.assertTrue(tracker.translate_comment(original, 'test-only'))
+            self.assertEqual(original['text'], 'Original comment')
+            if language == 'ko':
+                self.assertEqual(original['translation']['text'], 'Hello & welcome')
+            else:
+                self.assertNotIn('translation', original)
+
+    def test_translation_failure_and_retry_preserve_snapshot(self):
+        snapshot = {'date': '2026-10-08', 'views': 123, 'top_comment': {'text': 'Original'}}
+        videos = [{'snapshots': [snapshot]}]
+        with patch.object(tracker, 'urlopen', side_effect=URLError('test')):
+            self.assertTrue(tracker.enrich_translations(videos, 'test-only'))
+        self.assertEqual(snapshot['views'], 123)
+        self.assertEqual(snapshot['top_comment']['text'], 'Original')
+        self.assertNotIn('source_language', snapshot['top_comment'])
+        response = BytesIO(json.dumps({'data': {'translations': [{'detectedSourceLanguage': 'ja', 'translatedText': 'Translated'}]}}).encode())
+        with patch.object(tracker, 'urlopen', return_value=response):
+            self.assertTrue(tracker.enrich_translations(videos, 'test-only'))
+        self.assertEqual(snapshot['top_comment']['translation']['text'], 'Translated')
+        self.assertNotIn('translation_status', snapshot['top_comment'])
+
+    def test_translation_without_key_or_already_detected_skips_request(self):
+        with patch.object(tracker, 'urlopen') as fetch:
+            self.assertFalse(tracker.enrich_translations([{'snapshots': [{'top_comment': {'text': 'Original'}}]}], None))
+            self.assertFalse(tracker.enrich_translations([{'snapshots': [{'top_comment': {'text': 'Original', 'source_language': 'en'}}]}], 'test-only'))
+            fetch.assert_not_called()
 
     def test_repeat_capture_does_not_replace_baseline(self):
         data = {'snapshots': [{'date': '2026-10-08', 'views': 100}]}
