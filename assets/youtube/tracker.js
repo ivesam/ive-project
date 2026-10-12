@@ -7,7 +7,7 @@
   const timeFmt = new Intl.DateTimeFormat('en-GB', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Seoul' });
   const dayLabel = day => dateFmt.format(new Date(day + 'T00:00:00Z'));
   const signed = n => (n > 0 ? '+' : n < 0 ? '−' : '') + fmt.format(Math.abs(n));
-  let records = [];
+  let records = [], selectedId;
   function difference(index) {
     if (index < 1) return null;
     const current = records[index], previous = records[index - 1];
@@ -25,45 +25,73 @@
     byId('tracker-comment-text').textContent = comment ? comment.text : record.comment_status === 'disabled' ? 'Comments are disabled for this video.' : 'No comments posted this day were available at capture time.';
     byId('tracker-comment-meta').textContent = comment ? comment.author + ' · ' + fmt.format(comment.likes) + ' likes at capture' : '';
     byId('tracker-comment-link').hidden = !comment;
-    if (comment) byId('tracker-comment-link').href = 'https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=' + encodeURIComponent(comment.id);
+    if (comment) byId('tracker-comment-link').href = 'https://www.youtube.com/watch?v=' + selectedId + '&lc=' + encodeURIComponent(comment.id);
     byId('tracker-rows').querySelectorAll('button').forEach(button => {
       button.setAttribute('aria-pressed', String(button.dataset.index === String(index)));
     });
+  }
+  function renderChart() {
+    const holder = byId('tracker-chart'); holder.replaceChildren();
+    if (records.length < 2) { holder.textContent = 'The trend appears after two daily snapshots.'; return; }
+    const ns = 'http://www.w3.org/2000/svg', svg = document.createElementNS(ns, 'svg');
+    svg.setAttribute('viewBox', '0 0 800 180'); svg.setAttribute('role', 'img');
+    svg.setAttribute('aria-label', 'Total views from ' + dayLabel(records[0].date) + ' to ' + dayLabel(records.at(-1).date));
+    const min = Math.min(...records.map(r => r.views)), max = Math.max(...records.map(r => r.views));
+    const first = Date.parse(records[0].date), span = Date.parse(records.at(-1).date) - first;
+    const points = records.map(r => [20 + (Date.parse(r.date) - first) / span * 760, 155 - (r.views - min) / (max - min || 1) * 130]);
+    const line = document.createElementNS(ns, 'polyline'); line.setAttribute('points', points.map(p => p.join(',')).join(' ')); line.setAttribute('fill', 'none'); line.setAttribute('stroke', 'currentColor'); line.setAttribute('stroke-width', '3'); svg.append(line);
+    points.forEach(([x, y], i) => {
+      const dot = document.createElementNS(ns, 'circle'); dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', '4'); dot.setAttribute('fill', 'currentColor');
+      const title = document.createElementNS(ns, 'title'); title.textContent = dayLabel(records[i].date) + ': ' + fmt.format(records[i].views) + ' views'; dot.append(title); svg.append(dot);
+    });
+    holder.append(svg);
+    const range = document.createElement('p'); range.className = 'tracker-note'; range.textContent = dayLabel(records[0].date) + ' — ' + dayLabel(records.at(-1).date) + ' · ' + fmt.format(min) + '–' + fmt.format(max) + ' total views'; holder.append(range);
+  }
+  function selectVideo(video) {
+    selectedId = video.video_id;
+    records = [...video.snapshots].sort((a, b) => a.date.localeCompare(b.date));
+    byId('tracker-videos').querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.video === selectedId)));
+    byId('tracker-watch').href = 'https://www.youtube.com/watch?v=' + selectedId;
+    byId('tracker-title').textContent = video.title || 'YouTube video';
+    const selector = byId('tracker-day'), rows = byId('tracker-rows'); selector.replaceChildren(); rows.replaceChildren();
+    byId('tracker-content').hidden = !records.length;
+    if (!records.length) { status.textContent = 'Tracking starts with the next daily capture. Daily changes appear after two consecutive days.'; return; }
+    records.forEach((record, index) => {
+      const option = document.createElement('option'); option.value = String(index); option.textContent = dayLabel(record.date); selector.prepend(option);
+      const row = document.createElement('tr'), dateCell = document.createElement('td'), button = document.createElement('button');
+      button.type = 'button'; button.dataset.index = String(index); button.textContent = dayLabel(record.date); button.addEventListener('click', () => selectDay(index)); dateCell.append(button); row.append(dateCell);
+      const totalCell = document.createElement('td'); totalCell.textContent = fmt.format(record.views); row.append(totalCell);
+      const deltaCell = document.createElement('td'), delta = difference(index); deltaCell.textContent = delta === null ? '—' : signed(delta); row.append(deltaCell); rows.prepend(row);
+    });
+    selectDay(records.length - 1); renderChart();
+    status.textContent = Date.now() - Date.parse(records.at(-1).captured_at) > 36 * 3600000 ? 'Showing the last recorded counts. This video’s latest snapshot is older than a day.' : 'Daily snapshots · comment likes measured at capture time';
   }
   async function load() {
     try {
       const response = await fetch('assets/youtube/daily.json', { cache: 'no-store' });
       if (!response.ok) throw new Error('history unavailable');
-      const data = await response.json();
-      if (data.video_id !== 'XJzRgeX-bwo' || !Array.isArray(data.snapshots)) throw new Error('invalid history');
-      records = [...data.snapshots].sort((a, b) => a.date.localeCompare(b.date));
-      const dates = new Set();
-      for (const record of records) {
-        if (!/^\d{4}-\d{2}-\d{2}$/.test(record.date) || !Number.isFinite(Date.parse(record.date)) || !Number.isFinite(Date.parse(record.captured_at)) || !Number.isSafeInteger(record.views) || record.views < 0 || dates.has(record.date)) throw new Error('invalid snapshot');
-        dates.add(record.date);
+      const data = await response.json(), videos = data.videos || [data], ids = new Set();
+      if (!Array.isArray(videos) || !videos.length) throw new Error('empty watchlist');
+      for (const video of videos) {
+        if (!/^[A-Za-z0-9_-]{11}$/.test(video.video_id) || ids.has(video.video_id) || !Array.isArray(video.snapshots)) throw new Error('invalid video'); ids.add(video.video_id);
+        const dates = new Set();
+        for (const record of video.snapshots) {
+          if (!/^\d{4}-\d{2}-\d{2}$/.test(record.date) || !Number.isFinite(Date.parse(record.date)) || !Number.isFinite(Date.parse(record.captured_at)) || !Number.isSafeInteger(record.views) || record.views < 0 || dates.has(record.date)) throw new Error('invalid snapshot'); dates.add(record.date);
+        }
       }
-      if (!records.length) {
-        status.textContent = 'Your daily story starts here. The first snapshot will appear once tracking begins; daily changes follow after two consecutive days.';
-        return;
+      byId('tracker-count').textContent = videos.length + (videos.length === 1 ? ' video' : ' videos') + ' · updated daily in KST';
+      for (const video of videos) {
+        const button = document.createElement('button'); button.type = 'button'; button.className = 'tracker-video-card'; button.dataset.video = video.video_id;
+        const image = document.createElement('img'); image.src = 'https://i.ytimg.com/vi/' + video.video_id + '/hqdefault.jpg'; image.alt = ''; image.width = 480; image.height = 270; image.loading = 'lazy'; button.append(image);
+        const copy = document.createElement('span'); copy.className = 'tracker-video-copy';
+        const title = document.createElement('strong'); title.textContent = video.title || 'YouTube video'; copy.append(title);
+        const total = document.createElement('span'), latest = [...video.snapshots].sort((a, b) => a.date.localeCompare(b.date)).at(-1); total.textContent = latest ? fmt.format(latest.views) + ' views · ' + dayLabel(latest.date) : 'Awaiting first capture'; copy.append(total); button.append(copy);
+        button.addEventListener('click', () => selectVideo(video)); byId('tracker-videos').append(button);
       }
-      byId('tracker-title').textContent = data.title || 'Daily video tracker';
-      const selector = byId('tracker-day'), rows = byId('tracker-rows');
-      records.forEach((record, index) => {
-        const option = document.createElement('option'); option.value = String(index); option.textContent = dayLabel(record.date); selector.prepend(option);
-        const row = document.createElement('tr'), dateCell = document.createElement('td'), button = document.createElement('button');
-        button.type = 'button'; button.dataset.index = String(index); button.textContent = dayLabel(record.date); button.addEventListener('click', () => selectDay(index)); dateCell.append(button); row.append(dateCell);
-        const totalCell = document.createElement('td'); totalCell.textContent = fmt.format(record.views); row.append(totalCell);
-        const deltaCell = document.createElement('td'), delta = difference(index); deltaCell.textContent = delta === null ? '—' : signed(delta); row.append(deltaCell); rows.prepend(row);
-      });
-      selector.addEventListener('change', () => selectDay(Number(selector.value)));
-      selectDay(records.length - 1);
-      const latest = records[records.length - 1];
-      const age = Date.now() - Date.parse(latest.captured_at);
-      status.textContent = age > 36 * 3600000 ? 'The latest snapshot is older than a day. Showing the last recorded counts.' : 'Daily snapshots · comment likes measured at capture time';
-      byId('tracker-content').hidden = false;
+      byId('tracker-day').addEventListener('change', () => selectDay(Number(byId('tracker-day').value)));
+      selectVideo(videos[0]);
     } catch {
-      byId('tracker-content').hidden = true;
-      status.textContent = 'Daily history is unavailable right now. Please try again later.';
+      byId('tracker-content').hidden = true; status.textContent = 'Daily history is unavailable right now. Please try again later.';
     }
   }
   load();

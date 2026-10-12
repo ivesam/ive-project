@@ -1,78 +1,82 @@
 {
-  "video_id": "XJzRgeX-bwo",
-  "video_url": "https://www.youtube.com/watch?v=XJzRgeX-bwo",
   "timezone": "Asia/Seoul",
-  "title": "IVE 아이브 'POST CREDIT SCENE : GIRL HERO' Video",
-  "snapshots": [
+  "videos": [
     {
-      "date": "2026-10-08",
-      "captured_at": "2026-10-08T09:17:34.423852+00:00",
-      "views": 1031814,
-      "top_comment": {
-        "id": "UgxHd0Gdw7GXMRDKzs14AaABAg",
-        "author": "@motownstickman8959",
-        "text": "I've (no pun intended) been dying to see 1 of my favorite groups do a superhero concept. This is going to be the COOLEST. Can't wait to buy the photobook + album!!",
-        "likes": 5,
-        "published_at": "2026-10-07T23:30:55Z",
-        "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgxHd0Gdw7GXMRDKzs14AaABAg"
-      },
-      "comment_status": "available"
-    },
-    {
-      "date": "2026-10-09",
-      "captured_at": "2026-10-08T20:19:15.093419+00:00",
-      "views": 1180023,
-      "top_comment": {
-        "id": "Ugwa0wCs_258mjzR4mh4AaABAg",
-        "author": "@imf-earless5267",
-        "text": "the budget's nowhere to be found",
-        "likes": 2,
-        "published_at": "2026-10-08T15:51:57Z",
-        "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=Ugwa0wCs_258mjzR4mh4AaABAg"
-      },
-      "comment_status": "available"
-    },
-    {
-      "date": "2026-10-10",
-      "captured_at": "2026-10-09T19:52:46.951795+00:00",
-      "views": 1343887,
-      "top_comment": {
-        "id": "Ugxzmz68z2G-KGh1Sa94AaABAg",
-        "author": "@leonheartsqual6650",
-        "text": "아이브한테 돈 좀 써주면 안되납",
-        "likes": 1,
-        "published_at": "2026-10-09T15:26:50Z",
-        "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=Ugxzmz68z2G-KGh1Sa94AaABAg"
-      },
-      "comment_status": "available"
-    },
-    {
-      "date": "2026-10-11",
-      "captured_at": "2026-10-10T19:02:28.441452+00:00",
-      "views": 1421614,
-      "top_comment": {
-        "id": "UgzvRCXZY5aCtEhIwwx4AaABAg",
-        "author": "@Laxx_0548",
-        "text": "the ai is something….",
-        "likes": 0,
-        "published_at": "2026-10-10T15:09:34Z",
-        "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgzvRCXZY5aCtEhIwwx4AaABAg"
-      },
-      "comment_status": "available"
-    },
-    {
-      "date": "2026-10-12",
-      "captured_at": "2026-10-11T19:15:44.429182+00:00",
-      "views": 1470510,
-      "top_comment": {
-        "id": "UgxFOlDlzn8z7wdV0s54AaABAg",
-        "author": "@필동이",
-        "text": "1:01 가을선배 어디갔냐",
-        "likes": 0,
-        "published_at": "2026-10-11T15:32:17Z",
-        "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgxFOlDlzn8z7wdV0s54AaABAg"
-      },
-      "comment_status": "available"
+      "video_id": "XJzRgeX-bwo",
+      "video_url": "https://www.youtube.com/watch?v=XJzRgeX-bwo",
+      "title": "IVE 아이브 'POST CREDIT SCENE : GIRL HERO' Video",
+      "snapshots": [
+        {
+          "date": "2026-10-08",
+          "captured_at": "2026-10-08T09:17:34.423852+00:00",
+          "views": 1031814,
+          "top_comment": {
+            "id": "UgxHd0Gdw7GXMRDKzs14AaABAg",
+            "author": "@motownstickman8959",
+            "text": "I've (no pun intended) been dying to see 1 of my favorite groups do a superhero concept. This is going to be the COOLEST. Can't wait to buy the photobook + album!!",
+            "likes": 5,
+            "published_at": "2026-10-07T23:30:55Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgxHd0Gdw7GXMRDKzs14AaABAg"
+          },
+          "comment_status": "available"
+        },
+        {
+          "date": "2026-10-09",
+          "captured_at": "2026-10-08T20:19:15.093419+00:00",
+          "views": 1180023,
+          "top_comment": {
+            "id": "Ugwa0wCs_258mjzR4mh4AaABAg",
+            "author": "@imf-earless5267",
+            "text": "the budget's nowhere to be found",
+            "likes": 2,
+            "published_at": "2026-10-08T15:51:57Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=Ugwa0wCs_258mjzR4mh4AaABAg"
+          },
+          "comment_status": "available"
+        },
+        {
+          "date": "2026-10-10",
+          "captured_at": "2026-10-09T19:52:46.951795+00:00",
+          "views": 1343887,
+          "top_comment": {
+            "id": "Ugxzmz68z2G-KGh1Sa94AaABAg",
+            "author": "@leonheartsqual6650",
+            "text": "아이브한테 돈 좀 써주면 안되납",
+            "likes": 1,
+            "published_at": "2026-10-09T15:26:50Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=Ugxzmz68z2G-KGh1Sa94AaABAg"
+          },
+          "comment_status": "available"
+        },
+        {
+          "date": "2026-10-11",
+          "captured_at": "2026-10-10T19:02:28.441452+00:00",
+          "views": 1421614,
+          "top_comment": {
+            "id": "UgzvRCXZY5aCtEhIwwx4AaABAg",
+            "author": "@Laxx_0548",
+            "text": "the ai is something….",
+            "likes": 0,
+            "published_at": "2026-10-10T15:09:34Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgzvRCXZY5aCtEhIwwx4AaABAg"
+          },
+          "comment_status": "available"
+        },
+        {
+          "date": "2026-10-12",
+          "captured_at": "2026-10-11T19:15:44.429182+00:00",
+          "views": 1470510,
+          "top_comment": {
+            "id": "UgxFOlDlzn8z7wdV0s54AaABAg",
+            "author": "@필동이",
+            "text": "1:01 가을선배 어디갔냐",
+            "likes": 0,
+            "published_at": "2026-10-11T15:32:17Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgxFOlDlzn8z7wdV0s54AaABAg"
+          },
+          "comment_status": "available"
+        }
+      ]
     }
   ]
 }

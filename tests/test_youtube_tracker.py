@@ -3,7 +3,7 @@ import unittest
 import tempfile
 from unittest.mock import patch
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 spec = importlib.util.spec_from_file_location('tracker', Path(__file__).resolve().parents[1] / 'scripts/track_youtube.py')
@@ -62,6 +62,36 @@ class TrackerTest(unittest.TestCase):
             self.assertEqual(snapshot['views'], 123)
             self.assertEqual(snapshot['comment_status'], 'disabled')
             self.assertIsNone(snapshot['top_comment'])
+
+    def test_multiple_videos_keep_comments_and_views_separate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'daily.json'
+            path.write_text(json.dumps({'videos': [{'video_id': 'XJzRgeX-bwo', 'snapshots': []}, {'video_id': 'abcdefghijk', 'snapshots': []}]}))
+            def fetch(resource, params, key):
+                if resource == 'videos':
+                    return {'items': [{'snippet': {'title': params['id']}, 'statistics': {'viewCount': '123' if params['id'] == 'XJzRgeX-bwo' else '456'}}]}
+                today = (datetime.now(timezone.utc) - timedelta(seconds=1)).isoformat()
+                return {'items': [comment(params['videoId'], today, 10)]}
+            with patch.object(tracker, 'DATA', path), patch.dict('os.environ', {'YOUTUBE_API_KEY': 'test-only'}), patch.object(tracker, 'request_api', fetch):
+                tracker.main()
+            videos = json.loads(path.read_text())['videos']
+            self.assertEqual([v['snapshots'][0]['views'] for v in videos], [123, 456])
+            for v in videos:
+                self.assertIn('v=' + v['video_id'], v['snapshots'][0]['top_comment']['url'])
+
+    def test_later_video_failure_does_not_write_partial_history(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'daily.json'
+            original = json.dumps({'videos': [{'video_id': 'XJzRgeX-bwo', 'snapshots': []}, {'video_id': 'abcdefghijk', 'snapshots': []}]})
+            path.write_text(original)
+            def fetch(resource, params, key):
+                if params.get('id') == 'abcdefghijk':
+                    raise tracker.APIError('video unavailable')
+                return {'items': [{'snippet': {'title': 'One'}, 'statistics': {'viewCount': '123'}}]} if resource == 'videos' else {'items': []}
+            with patch.object(tracker, 'DATA', path), patch.dict('os.environ', {'YOUTUBE_API_KEY': 'test-only'}), patch.object(tracker, 'request_api', fetch):
+                with self.assertRaises(tracker.APIError):
+                    tracker.main()
+            self.assertEqual(path.read_text(), original)
 
     def test_repeat_capture_does_not_replace_baseline(self):
         data = {'snapshots': [{'date': '2026-10-08', 'views': 100}]}

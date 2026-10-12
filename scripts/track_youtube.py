@@ -40,12 +40,12 @@ def request_api(resource, parameters, key):
         time.sleep(2 ** attempt)
 
 
-def top_comment(fetch, start, end, max_pages=1000):
+def top_comment(fetch, start, end, max_pages=1000, video_id=VIDEO_ID):
     """Scan newest-first; stop only once the complete day's top-level comments are covered."""
     best = None
     token = None
     for _ in range(max_pages):
-        params = {'part': 'snippet', 'videoId': VIDEO_ID, 'order': 'time', 'maxResults': 100, 'textFormat': 'plainText'}
+        params = {'part': 'snippet', 'videoId': video_id, 'order': 'time', 'maxResults': 100, 'textFormat': 'plainText'}
         if token:
             params['pageToken'] = token
         response = fetch('commentThreads', params)
@@ -62,7 +62,7 @@ def top_comment(fetch, start, end, max_pages=1000):
             candidate = {'id': comment['id'], 'author': snippet['authorDisplayName'],
                          'text': snippet.get('textOriginal', snippet['textDisplay']),
                          'likes': int(snippet['likeCount']), 'published_at': snippet['publishedAt'],
-                         'url': 'https://www.youtube.com/watch?' + urlencode({'v': VIDEO_ID, 'lc': comment['id']})}
+                         'url': 'https://www.youtube.com/watch?' + urlencode({'v': video_id, 'lc': comment['id']})}
             # Stable tie-break: earliest published comment, then its ID.
             if best is None or (-candidate['likes'], candidate['published_at'], candidate['id']) < (-best['likes'], best['published_at'], best['id']):
                 best = candidate
@@ -80,18 +80,13 @@ def save_snapshot(data, snapshot):
     return data
 
 
-def main():
-    key = os.environ.get('YOUTUBE_API_KEY')
-    if not key:
-        raise APIError('YOUTUBE_API_KEY is not configured')
-    now = datetime.now(timezone.utc)
+def capture_video(data, fetch, now):
     local = now.astimezone(ZONE)
-    data = json.loads(DATA.read_text())
+    video_id = data.get('video_id', VIDEO_ID)
     if any(record['date'] == local.date().isoformat() for record in data['snapshots']):
         print('Today already has a snapshot; unchanged.')
-        return
-    fetch = lambda resource, params: request_api(resource, params, key)
-    response = fetch('videos', {'part': 'snippet,statistics', 'id': VIDEO_ID})
+        return False
+    response = fetch('videos', {'part': 'snippet,statistics', 'id': video_id})
     if not response.get('items'):
         raise APIError('video unavailable')
     video = response['items'][0]
@@ -101,7 +96,7 @@ def main():
     start = local.replace(hour=0, minute=0, second=0, microsecond=0)
     comment_status = 'available'
     try:
-        comment = top_comment(fetch, start, now)
+        comment = top_comment(fetch, start, now, video_id=video_id)
         if comment is None:
             comment_status = 'no_comments'
     except APIError as error:
@@ -112,6 +107,29 @@ def main():
     data['title'] = video['snippet']['title']
     save_snapshot(data, {'date': local.date().isoformat(), 'captured_at': now.isoformat(),
                          'views': views, 'top_comment': comment, 'comment_status': comment_status})
+    return True
+
+
+def main():
+    key = os.environ.get('YOUTUBE_API_KEY')
+    if not key:
+        raise APIError('YOUTUBE_API_KEY is not configured')
+    now = datetime.now(timezone.utc)
+    local = now.astimezone(ZONE)
+    data = json.loads(DATA.read_text())
+    videos = data.get('videos', [data])
+    if not isinstance(videos, list) or not videos:
+        raise APIError('no tracked videos configured')
+    import re
+    ids = [video.get('video_id', VIDEO_ID) for video in videos]
+    if any(not re.fullmatch(r'[A-Za-z0-9_-]{11}', id) for id in ids) or len(ids) != len(set(ids)):
+        raise APIError('invalid or duplicate video ID')
+    fetch = lambda resource, params: request_api(resource, params, key)
+    changed = False
+    for video in videos:
+        changed = capture_video(video, fetch, now) or changed
+    if not changed:
+        return
     temporary = DATA.with_suffix('.tmp')
     temporary.write_text(json.dumps(data, ensure_ascii=False, indent=2) + '\n')
     temporary.replace(DATA)
