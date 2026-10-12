@@ -89,7 +89,7 @@ jobs:
                   if 'id="video-tracker"' in html:
                       import json
                       history = json.loads(read('assets/youtube/daily.json'))
-                      assert history['video_id'] == 'XJzRgeX-bwo', 'Wrong tracked video'
+                      history = next(video for video in history.get('videos', [history]) if video['video_id'] == 'XJzRgeX-bwo')
                       assert 'function selectDay' in read('assets/youtube/tracker.js'), 'Tracker script missing'
                       assert history['snapshots'], 'Initial YouTube snapshot missing'
                       latest = history['snapshots'][-1]

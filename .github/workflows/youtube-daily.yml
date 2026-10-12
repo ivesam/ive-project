@@ -6,6 +6,7 @@ on:
     paths:
       - '.github/workflows/youtube-daily.yml'
       - 'scripts/track_youtube.py'
+      - 'assets/youtube/daily.json'
   schedule:
     - cron: '55 14 * * *' # 23:55 Asia/Seoul; GitHub may run this late.
   workflow_dispatch:
