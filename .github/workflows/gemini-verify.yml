@@ -28,7 +28,7 @@ jobs:
           models = request('models').get('models', [])
           names = [m['name'] for m in models if 'generateContent' in m.get('supportedGenerationMethods', []) and 'flash' in m['name'] and not any(x in m['name'] for x in ['image', 'audio', 'tts', 'live'])]
           print('Available Flash models: ' + ', '.join(names))
-          model = next((m for m in names if m == 'models/gemini-2.5-flash'), next((m for m in names if 'preview' not in m and 'latest' not in m), None))
+          model = next((m for m in names if m == 'models/gemini-3.8-flash'), next((m for m in names if 'preview' not in m and 'latest' not in m), None))
           if not model:
               raise SystemExit('No compatible Flash model is available')
           payload = {'contents': [{'parts': [{'text': 'Translate this Korean comment into English: 정말 좋아요. Return JSON with source_language and translated_text.'}]}], 'generationConfig': {'responseMimeType': 'application/json'}}
