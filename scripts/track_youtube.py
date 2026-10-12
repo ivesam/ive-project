@@ -110,6 +110,41 @@ def capture_video(data, fetch, now):
     return True
 
 
+def translate_comment(comment, key):
+    """Store an English translation only when the detected language is neither English nor Chinese."""
+    url = 'https://translation.googleapis.com/language/translate/v2?' + urlencode({'key': key})
+    payload = json.dumps({'q': comment['text'], 'target': 'en', 'format': 'text'}).encode()
+    try:
+        with urlopen(Request(url, data=payload, headers={'Content-Type': 'application/json'}), timeout=30) as response:
+            result = json.load(response)['data']['translations'][0]
+        language = result['detectedSourceLanguage'].lower()
+        comment['source_language'] = language
+        if language.split('-')[0] not in ('en', 'zh'):
+            import html
+            comment['translation'] = {'text': html.unescape(result['translatedText']), 'language': 'en', 'provider': 'Google Cloud Translation'}
+        comment.pop('translation_status', None)
+        return True
+    except (HTTPError, URLError, TimeoutError, KeyError, ValueError, IndexError):
+        # Translation failures must not discard the daily view/comment capture or leak API credentials.
+        comment['translation_status'] = 'unavailable'
+        print('Comment translation unavailable; original text retained.', file=sys.stderr)
+        return False
+
+
+def enrich_translations(videos, key):
+    changed = False
+    if not key:
+        return changed
+    for video in videos:
+        for snapshot in video['snapshots']:
+            comment = snapshot.get('top_comment')
+            if comment and not comment.get('source_language'):
+                before = json.dumps(comment, sort_keys=True)
+                translate_comment(comment, key)
+                changed = changed or before != json.dumps(comment, sort_keys=True)
+    return changed
+
+
 def main():
     key = os.environ.get('YOUTUBE_API_KEY')
     if not key:
@@ -128,6 +163,7 @@ def main():
     changed = False
     for video in videos:
         changed = capture_video(video, fetch, now) or changed
+    changed = enrich_translations(videos, os.environ.get('TRANSLATION_API_KEY')) or changed
     if not changed:
         return
     temporary = DATA.with_suffix('.tmp')
