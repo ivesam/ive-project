@@ -107,6 +107,21 @@
             "source_language": "en"
           },
           "comment_status": "available"
+        },
+        {
+          "date": "2026-10-14",
+          "captured_at": "2026-10-13T20:25:32.711202+00:00",
+          "views": 1538948,
+          "top_comment": {
+            "id": "UgyJeqpNmqMip6tHzAt4AaABAg",
+            "author": "@juandelanoy",
+            "text": "g'OOD'ess #GAEUL",
+            "likes": 0,
+            "published_at": "2026-10-13T16:28:37Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgyJeqpNmqMip6tHzAt4AaABAg",
+            "source_language": "en"
+          },
+          "comment_status": "available"
         }
       ]
     },
@@ -148,6 +163,21 @@
               "provider": "Gemini",
               "model": "gemini-3.8-flash"
             }
+          },
+          "comment_status": "available"
+        },
+        {
+          "date": "2026-10-14",
+          "captured_at": "2026-10-13T20:25:32.711202+00:00",
+          "views": 932471,
+          "top_comment": {
+            "id": "Ugx32M8tFnacF4fdqlR4AaABAg",
+            "author": "@minsai.18",
+            "text": "liz, gaeul, rei will slayed this era too...they are too perfect for this concept",
+            "likes": 2,
+            "published_at": "2026-10-13T15:08:20Z",
+            "url": "https://www.youtube.com/watch?v=vQ5mF2zKEj0&lc=Ugx32M8tFnacF4fdqlR4AaABAg",
+            "source_language": "en"
           },
           "comment_status": "available"
         }
