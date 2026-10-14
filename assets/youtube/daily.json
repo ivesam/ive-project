@@ -122,6 +122,27 @@
             "source_language": "en"
           },
           "comment_status": "available"
+        },
+        {
+          "date": "2026-10-15",
+          "captured_at": "2026-10-14T19:01:43.264734+00:00",
+          "views": 1561179,
+          "top_comment": {
+            "id": "UgzSYyG_fCI87UoMryF4AaABAg",
+            "author": "@천조누설",
+            "text": "뭐냐? 진짜냐?",
+            "likes": 0,
+            "published_at": "2026-10-14T15:45:42Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgzSYyG_fCI87UoMryF4AaABAg",
+            "source_language": "ko",
+            "translation": {
+              "text": "What is this? Is this for real?",
+              "language": "en",
+              "provider": "Gemini",
+              "model": "gemini-3.8-flash"
+            }
+          },
+          "comment_status": "available"
         }
       ]
     },
@@ -178,6 +199,27 @@
             "published_at": "2026-10-13T15:08:20Z",
             "url": "https://www.youtube.com/watch?v=vQ5mF2zKEj0&lc=Ugx32M8tFnacF4fdqlR4AaABAg",
             "source_language": "en"
+          },
+          "comment_status": "available"
+        },
+        {
+          "date": "2026-10-15",
+          "captured_at": "2026-10-14T19:01:43.264734+00:00",
+          "views": 1000445,
+          "top_comment": {
+            "id": "Ugy3kFU5zyKHQT5yFUt4AaABAg",
+            "author": "@user-sm9qo4vc5f",
+            "text": "레이😊❤",
+            "likes": 0,
+            "published_at": "2026-10-14T15:32:24Z",
+            "url": "https://www.youtube.com/watch?v=vQ5mF2zKEj0&lc=Ugy3kFU5zyKHQT5yFUt4AaABAg",
+            "source_language": "ko",
+            "translation": {
+              "text": "Rei😊❤",
+              "language": "en",
+              "provider": "Gemini",
+              "model": "gemini-3.8-flash"
+            }
           },
           "comment_status": "available"
         }
