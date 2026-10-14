@@ -33,13 +33,30 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+      url: ${{ steps.pages-mode.outputs.page_url }}
     steps:
       - name: Check out the website
         uses: actions/checkout@v4
         with:
           ref: ${{ inputs.source_ref || github.sha }}
+      - name: Detect Pages publishing mode
+        id: pages-mode
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          MODE=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.build_type')
+          SITE_URL=$(gh api "repos/$GITHUB_REPOSITORY/pages" --jq '.html_url')
+          if [ "$MODE" != 'legacy' ] && [ "$MODE" != 'workflow' ]; then
+            echo "Unsupported Pages publishing mode: $MODE" >&2
+            exit 1
+          fi
+          echo "build_type=$MODE" >> "$GITHUB_OUTPUT"
+          echo "page_url=$SITE_URL" >> "$GITHUB_OUTPUT"
+          if [ "$MODE" = 'legacy' ]; then
+            echo 'Pages publishes directly from main; verifying its built-in deployment.'
+          fi
       - name: Configure GitHub Pages
+        if: steps.pages-mode.outputs.build_type == 'workflow'
         uses: actions/configure-pages@v5
         with:
           enablement: true
@@ -49,19 +66,22 @@ jobs:
           cp index.html style.css script.js .nojekyll .pages/
           cp -R assets .pages/assets
       - name: Upload website
+        if: steps.pages-mode.outputs.build_type == 'workflow'
         uses: actions/upload-pages-artifact@v3
         with:
           path: .pages
       - name: Publish website
+        if: steps.pages-mode.outputs.build_type == 'workflow'
         id: deployment
         uses: actions/deploy-pages@v4
       - name: Verify published landing page
         env:
-          SITE_URL: ${{ steps.deployment.outputs.page_url }}
+          SITE_URL: ${{ steps.pages-mode.outputs.page_url }}
           SITE_COMMIT: ${{ github.sha }}
         run: |
           python - <<'PY'
           import os, time, urllib.request
+          from pathlib import Path
           base = os.environ['SITE_URL'].rstrip('/') + '/'
           query = '?verify=' + os.environ['SITE_COMMIT']
           for attempt in range(18):
@@ -97,6 +117,15 @@ jobs:
                       assert latest['comment_status'] in ('available', 'no_comments', 'disabled'), 'Invalid comment status'
                       if latest['comment_status'] == 'available':
                           assert latest['top_comment']['id'], 'Comment missing'
+                      expected = json.loads(Path('.pages/assets/youtube/daily.json').read_text())
+                      published = json.loads(read('assets/youtube/daily.json'))
+                      actual_videos = {video['video_id']: video for video in published.get('videos', [published])}
+                      for video in expected.get('videos', [expected]):
+                          assert video['video_id'] in actual_videos, 'Tracked video not published'
+                          actual_records = {record['date']: record for record in actual_videos[video['video_id']]['snapshots']}
+                          for record in video['snapshots']:
+                              assert record['date'] in actual_records, 'Daily snapshot not published yet'
+                              assert actual_records[record['date']]['views'] == record['views'], 'Published view count does not match saved history'
                       print('Verified live YouTube tracker: ' + str(len(history['snapshots'])) + ' snapshots; latest views: ' + str(latest['views']))
                   print('Verified live landing page, stylesheet, and native MP4 background at ' + base)
                   break

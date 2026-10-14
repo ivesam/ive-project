@@ -8,7 +8,7 @@ The hero plays the user-supplied 1080p MP4 as a muted, inline loop. The backgrou
 
 The GitHub Actions workflow `.github/workflows/pages.yml` publishes the website files at the repository root whenever website files change on `main`. It also supports manual runs from the Actions tab.
 
-The workflow attempts to enable GitHub Pages automatically. If GitHub refuses automatic enablement, open **Settings → Pages**, set **Source** to **GitHub Actions**, then rerun the failed workflow from the Actions tab.
+The workflow reads the existing Pages publishing mode. With **Deploy from a branch**, GitHub’s built-in publisher deploys main and our workflow verifies the live site without starting a competing deployment. With **GitHub Actions**, our workflow uploads and deploys the website artifact. Keeping just one publisher prevents “deployment already in progress” failures. GitHub token permissions do not allow this workflow to switch the repository’s Pages source; the workflow does not attempt to change that setting.
 
 The site URL appears in the successful workflow deployment and in repository Settings → Pages.
 
@@ -32,7 +32,7 @@ The collector uses `videos.list` for the public total and scans `commentThreads.
 
 History lives in `assets/youtube/daily.json`, with a `videos` array. To add a video, append an object with its 11-character `video_id`, `title`, `video_url`, and `snapshots: []`. Keep existing objects and their snapshots. Merging this change triggers collection for newly added videos; duplicates are rejected. No historical counts are invented. The collector processes every video and saves atomically after all requests succeed; a failure preserves all existing histories. API usage increases with the number of videos and comments scanned. View growth is the difference between consecutive calendar-date snapshots, with a percentage relative to the previous total. Missing dates show no daily change; negative adjustments remain visible. Differences are between capture times, not official YouTube Analytics calendar-day measurements. A delayed run crossing midnight may leave a gap, rather than inventing a count for yesterday.
 
-The workflow commits only the history file and calls the Pages deployment workflow explicitly: commits made with `GITHUB_TOKEN` do not trigger another push workflow. The browser loads the history without any credentials. History starts empty until a successful API run. Validate with `python -m unittest discover -s tests`.
+The workflow commits only the history file and calls the Pages workflow explicitly. The Pages workflow detects whether the repository uses GitHub’s built-in branch publisher or Actions artifact deployment, and starts an artifact deployment only in Actions mode. It verifies that every saved video/date/view total appears on the live site, retrying while publication catches up. The built-in branch publisher handles these history commits in branch mode; token-authored commits do not trigger ordinary push workflows. The browser loads the history without any credentials. History starts empty until a successful API run. Validate with `python -m unittest discover -s tests`.
 
 ### Comment translations
 
