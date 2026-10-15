@@ -143,6 +143,21 @@
             }
           },
           "comment_status": "available"
+        },
+        {
+          "date": "2026-10-16",
+          "captured_at": "2026-10-15T18:45:38.729537+00:00",
+          "views": 1581180,
+          "top_comment": {
+            "id": "UgxxUElVZVy0u69YvuJ4AaABAg",
+            "author": "@ddlukm4_ah",
+            "text": "AHHHHHIQQKJS🔥",
+            "likes": 0,
+            "published_at": "2026-10-15T15:22:15Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgxxUElVZVy0u69YvuJ4AaABAg",
+            "source_language": "en"
+          },
+          "comment_status": "available"
         }
       ]
     },
@@ -216,6 +231,27 @@
             "source_language": "ko",
             "translation": {
               "text": "Rei😊❤",
+              "language": "en",
+              "provider": "Gemini",
+              "model": "gemini-3.8-flash"
+            }
+          },
+          "comment_status": "available"
+        },
+        {
+          "date": "2026-10-16",
+          "captured_at": "2026-10-15T18:45:38.729537+00:00",
+          "views": 1047714,
+          "top_comment": {
+            "id": "UgyQlkT7U--We8KA-Jx4AaABAg",
+            "author": "@멜로디-d7r",
+            "text": "아이브 노래는 다좋아 이번 컴백도 넘 기대기대 아이팅😘🩷🩷",
+            "likes": 0,
+            "published_at": "2026-10-15T16:31:07Z",
+            "url": "https://www.youtube.com/watch?v=vQ5mF2zKEj0&lc=UgyQlkT7U--We8KA-Jx4AaABAg",
+            "source_language": "ko",
+            "translation": {
+              "text": "I love all of IVE's songs, I'm so excited for this comeback too! Iveting😘🩷🩷",
               "language": "en",
               "provider": "Gemini",
               "model": "gemini-3.8-flash"
