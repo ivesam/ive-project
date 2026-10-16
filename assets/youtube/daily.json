@@ -158,6 +158,13 @@
             "source_language": "en"
           },
           "comment_status": "available"
+        },
+        {
+          "date": "2026-10-17",
+          "captured_at": "2026-10-16T18:30:24.306678+00:00",
+          "views": 1597591,
+          "top_comment": null,
+          "comment_status": "no_comments"
         }
       ]
     },
@@ -252,6 +259,27 @@
             "source_language": "ko",
             "translation": {
               "text": "I love all of IVE's songs, I'm so excited for this comeback too! Iveting😘🩷🩷",
+              "language": "en",
+              "provider": "Gemini",
+              "model": "gemini-3.8-flash"
+            }
+          },
+          "comment_status": "available"
+        },
+        {
+          "date": "2026-10-17",
+          "captured_at": "2026-10-16T18:30:24.306678+00:00",
+          "views": 1077959,
+          "top_comment": {
+            "id": "Ugwv9Ivy4Um29T-1BlR4AaABAg",
+            "author": "@오애-f9x",
+            "text": "재밌다 아이브",
+            "likes": 0,
+            "published_at": "2026-10-16T15:13:37Z",
+            "url": "https://www.youtube.com/watch?v=vQ5mF2zKEj0&lc=Ugwv9Ivy4Um29T-1BlR4AaABAg",
+            "source_language": "ko",
+            "translation": {
+              "text": "IVE is fun",
               "language": "en",
               "provider": "Gemini",
               "model": "gemini-3.8-flash"
