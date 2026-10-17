@@ -165,6 +165,13 @@
           "views": 1597591,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-10-18",
+          "captured_at": "2026-10-17T17:35:47.844634+00:00",
+          "views": 1612920,
+          "top_comment": null,
+          "comment_status": "no_comments"
         }
       ]
     },
@@ -286,6 +293,13 @@
             }
           },
           "comment_status": "available"
+        },
+        {
+          "date": "2026-10-18",
+          "captured_at": "2026-10-17T17:35:47.844634+00:00",
+          "views": 1103332,
+          "top_comment": null,
+          "comment_status": "no_comments"
         }
       ]
     }
