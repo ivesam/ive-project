@@ -172,6 +172,13 @@
           "views": 1612920,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-10-19",
+          "captured_at": "2026-10-18T17:38:41.439140+00:00",
+          "views": 1629596,
+          "top_comment": null,
+          "comment_status": "no_comments"
         }
       ]
     },
@@ -300,6 +307,21 @@
           "views": 1103332,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-10-19",
+          "captured_at": "2026-10-18T17:38:41.439140+00:00",
+          "views": 1129561,
+          "top_comment": {
+            "id": "UgzLxXmzlV-TkkWQYYR4AaABAg",
+            "author": "@likeitsmagneticৎ",
+            "text": "I’m so excited for this comeback! The concept is so cool",
+            "likes": 0,
+            "published_at": "2026-10-18T15:13:53Z",
+            "url": "https://www.youtube.com/watch?v=vQ5mF2zKEj0&lc=UgzLxXmzlV-TkkWQYYR4AaABAg",
+            "source_language": "en"
+          },
+          "comment_status": "available"
         }
       ]
     }
