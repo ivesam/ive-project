@@ -179,6 +179,21 @@
           "views": 1629596,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-10-20",
+          "captured_at": "2026-10-19T20:17:16.515798+00:00",
+          "views": 1650237,
+          "top_comment": {
+            "id": "UgzkmAwrwiGYbfF2qfF4AaABAg",
+            "author": "@newie020",
+            "text": "Wait this concept eats !!",
+            "likes": 0,
+            "published_at": "2026-10-19T16:22:53Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgzkmAwrwiGYbfF2qfF4AaABAg",
+            "source_language": "en"
+          },
+          "comment_status": "available"
         }
       ]
     },
@@ -322,6 +337,13 @@
             "source_language": "en"
           },
           "comment_status": "available"
+        },
+        {
+          "date": "2026-10-20",
+          "captured_at": "2026-10-19T20:17:16.515798+00:00",
+          "views": 1171116,
+          "top_comment": null,
+          "comment_status": "no_comments"
         }
       ]
     }
