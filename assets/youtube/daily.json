@@ -215,6 +215,21 @@
           "views": 1665005,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-10-24",
+          "captured_at": "2026-10-23T18:47:23.540445+00:00",
+          "views": 1668170,
+          "top_comment": {
+            "id": "UgygVdAHN0RAcHqBZ4N4AaABAg",
+            "author": "@AudreySlayz",
+            "text": "Not Yujin taking off with the cookies! I NEED THOSE COOKIES!!!😂😂😂🍪",
+            "likes": 0,
+            "published_at": "2026-10-23T15:58:50Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgygVdAHN0RAcHqBZ4N4AaABAg",
+            "source_language": "en"
+          },
+          "comment_status": "available"
         }
       ]
     },
@@ -384,6 +399,13 @@
           "date": "2026-10-23",
           "captured_at": "2026-10-22T18:56:41.374174+00:00",
           "views": 1200224,
+          "top_comment": null,
+          "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-10-24",
+          "captured_at": "2026-10-23T18:47:23.540445+00:00",
+          "views": 1204873,
           "top_comment": null,
           "comment_status": "no_comments"
         }
