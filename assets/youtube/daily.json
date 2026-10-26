@@ -244,6 +244,13 @@
           "views": 1674464,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-10-27",
+          "captured_at": "2026-10-26T20:13:00.992625+00:00",
+          "views": 1677053,
+          "top_comment": null,
+          "comment_status": "no_comments"
         }
       ]
     },
@@ -434,6 +441,13 @@
           "date": "2026-10-26",
           "captured_at": "2026-10-25T17:57:38.653100+00:00",
           "views": 1211277,
+          "top_comment": null,
+          "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-10-27",
+          "captured_at": "2026-10-26T20:13:00.992625+00:00",
+          "views": 1213693,
           "top_comment": null,
           "comment_status": "no_comments"
         }
