@@ -258,6 +258,21 @@
           "views": 1678643,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-10-29",
+          "captured_at": "2026-10-28T19:58:15.069337+00:00",
+          "views": 1680034,
+          "top_comment": {
+            "id": "Ugx4zAx5hAVH40I6HVN4AaABAg",
+            "author": "@adharams7861",
+            "text": "Waleska is spot on !!! \nButtermilk is a tangy, fermented dairy drink that is either the leftover liquid from churning heavy cream or cultured yogurt. The reason Indians are drinking it so often is because we've been told since young age that drinking buttermilk Improves Gut Health, Soothes Acid Reflux, Strengthens Bones, provides hydration and electrolytes, and source of B Vitamins while being naturally lower in fat than standard whole milk .. etc...etc... blah...blah...blah... you get the gist of it.\n\nQuick tip : If you are trying it for the first time, try the spiced version with added cumin, salt and garlic. It tastes great !",
+            "likes": 0,
+            "published_at": "2026-10-28T19:41:19Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=Ugx4zAx5hAVH40I6HVN4AaABAg",
+            "source_language": "en"
+          },
+          "comment_status": "available"
         }
       ]
     },
@@ -462,6 +477,13 @@
           "date": "2026-10-28",
           "captured_at": "2026-10-27T19:44:38.128587+00:00",
           "views": 1215351,
+          "top_comment": null,
+          "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-10-29",
+          "captured_at": "2026-10-28T19:58:15.069337+00:00",
+          "views": 1216900,
           "top_comment": null,
           "comment_status": "no_comments"
         }
