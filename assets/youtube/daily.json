@@ -308,6 +308,21 @@
           "views": 1686059,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-11-04",
+          "captured_at": "2026-11-03T20:42:43.587750+00:00",
+          "views": 1686859,
+          "top_comment": {
+            "id": "Ugx8qoNGGJR_XvxA2bF4AaABAg",
+            "author": "@ouiouimonamij",
+            "text": "is that ai",
+            "likes": 0,
+            "published_at": "2026-11-03T18:08:14Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=Ugx8qoNGGJR_XvxA2bF4AaABAg",
+            "source_language": "en"
+          },
+          "comment_status": "available"
         }
       ]
     },
@@ -554,6 +569,13 @@
           "date": "2026-11-03",
           "captured_at": "2026-11-02T22:56:24.686874+00:00",
           "views": 1222758,
+          "top_comment": null,
+          "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-11-04",
+          "captured_at": "2026-11-03T20:42:43.587750+00:00",
+          "views": 1223578,
           "top_comment": null,
           "comment_status": "no_comments"
         }
