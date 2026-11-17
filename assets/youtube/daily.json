@@ -414,6 +414,21 @@
           "views": 1694759,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-11-18",
+          "captured_at": "2026-11-17T22:43:29.788464+00:00",
+          "views": 1695113,
+          "top_comment": {
+            "id": "UgyzJUudZFRxjpjliId4AaABAg",
+            "author": "@azimedemir2911",
+            "text": "🫶🏻🩷",
+            "likes": 0,
+            "published_at": "2026-11-17T18:18:56Z",
+            "url": "https://www.youtube.com/watch?v=XJzRgeX-bwo&lc=UgyzJUudZFRxjpjliId4AaABAg",
+            "source_language": "en"
+          },
+          "comment_status": "available"
         }
       ]
     },
@@ -758,6 +773,13 @@
           "date": "2026-11-17",
           "captured_at": "2026-11-16T23:34:51.425209+00:00",
           "views": 1231568,
+          "top_comment": null,
+          "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-11-18",
+          "captured_at": "2026-11-17T22:43:29.788464+00:00",
+          "views": 1232071,
           "top_comment": null,
           "comment_status": "no_comments"
         }
