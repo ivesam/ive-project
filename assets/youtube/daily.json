@@ -429,6 +429,13 @@
             "source_language": "en"
           },
           "comment_status": "available"
+        },
+        {
+          "date": "2026-11-19",
+          "captured_at": "2026-11-18T22:24:47.244685+00:00",
+          "views": 1695450,
+          "top_comment": null,
+          "comment_status": "no_comments"
         }
       ]
     },
@@ -780,6 +787,13 @@
           "date": "2026-11-18",
           "captured_at": "2026-11-17T22:43:29.788464+00:00",
           "views": 1232071,
+          "top_comment": null,
+          "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-11-19",
+          "captured_at": "2026-11-18T22:24:47.244685+00:00",
+          "views": 1232512,
           "top_comment": null,
           "comment_status": "no_comments"
         }
