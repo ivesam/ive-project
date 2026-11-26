@@ -485,6 +485,13 @@
           "views": 1698141,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-11-27",
+          "captured_at": "2026-11-26T23:23:42.106120+00:00",
+          "views": 1698438,
+          "top_comment": null,
+          "comment_status": "no_comments"
         }
       ]
     },
@@ -894,6 +901,21 @@
           "views": 1235956,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-11-27",
+          "captured_at": "2026-11-26T23:23:42.106120+00:00",
+          "views": 1236395,
+          "top_comment": {
+            "id": "UgwbyQLe_NcIfupuNPh4AaABAg",
+            "author": "@ji9star.ৎ",
+            "text": "Rei looks like bachiraa",
+            "likes": 0,
+            "published_at": "2026-11-26T18:00:06Z",
+            "url": "https://www.youtube.com/watch?v=vQ5mF2zKEj0&lc=UgwbyQLe_NcIfupuNPh4AaABAg",
+            "source_language": "en"
+          },
+          "comment_status": "available"
         }
       ]
     }
