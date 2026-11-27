@@ -492,6 +492,13 @@
           "views": 1698438,
           "top_comment": null,
           "comment_status": "no_comments"
+        },
+        {
+          "date": "2026-11-28",
+          "captured_at": "2026-11-27T23:03:39.439669+00:00",
+          "views": 1698759,
+          "top_comment": null,
+          "comment_status": "no_comments"
         }
       ]
     },
@@ -916,6 +923,13 @@
             "source_language": "en"
           },
           "comment_status": "available"
+        },
+        {
+          "date": "2026-11-28",
+          "captured_at": "2026-11-27T23:03:39.439669+00:00",
+          "views": 1236754,
+          "top_comment": null,
+          "comment_status": "no_comments"
         }
       ]
     }
